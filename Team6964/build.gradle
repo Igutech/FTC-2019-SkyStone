@@ -10,9 +10,19 @@
 // Custom definitions may go here
 // Include common definitions from above.
 apply from: '../build.common.gradle'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 dependencies {
     /*
      * Other Modules
      */
     implementation project(':FtcRobotController')
+    implementation 'com.acmerobotics.dashboard:dashboard:0.3.6'
+    implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.0'
+    implementation 'com.acmerobotics.roadrunner:core:0.4.6'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.github.dogecv:dogecv:2020.4-alpha'
+}
+repositories {
+    mavenCentral()
 }
