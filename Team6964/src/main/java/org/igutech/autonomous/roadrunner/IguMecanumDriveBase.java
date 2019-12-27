@@ -18,6 +18,7 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
 
     private List<DcMotorEx> motors;
     private AutoUtilManager utils;
+    public static final boolean RUN_USING_ENCODER = true;
 
     public IguMecanumDriveBase(AutoUtilManager utils) {
         super();
@@ -31,11 +32,6 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
                 (DcMotorEx) utils.getHardware().getMotors().get("frontright")
         );
 
-        //TODO: REVERSE MOTORS HERE
-//        motors.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
-//        motors.get(1).setDirection(DcMotorSimple.Direction.REVERSE);
-//        motors.get(2).setDirection(DcMotorSimple.Direction.FORWARD);
-//        motors.get(3).setDirection(DcMotorSimple.Direction.FORWARD);
         motors.get(0).setDirection(DcMotorSimple.Direction.FORWARD);
         motors.get(1).setDirection(DcMotorSimple.Direction.FORWARD);
         motors.get(2).setDirection(DcMotorSimple.Direction.REVERSE);
@@ -48,7 +44,10 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
         }
 
         this.setLocalizer(new MecanumDrive.MecanumLocalizer(this, true));
+
     }
+
+
 
     @Override
     public PIDCoefficients getPIDCoefficients(DcMotor.RunMode runMode) {
@@ -89,11 +88,10 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
     public List<Double> getWheelVelocities() {
         List<Double> wheelVelocities = new ArrayList<>();
         for (DcMotorEx motor : motors) {
-            wheelVelocities.add(AutoDriveUtil.OffsetCorrectedEncoderData.convertToUnits((int)motor.getVelocity(), AutoDriveUtil.OffsetCorrectedEncoderData.Units.INCHES));
+            wheelVelocities.add(AutoDriveUtil.OffsetCorrectedEncoderData.convertToUnits((int)motor.getVelocity(),AutoDriveUtil.OffsetCorrectedEncoderData.Units.INCHES));
         }
         return wheelVelocities;
     }
-
 
     @Override
     public double getRawExternalHeading() {

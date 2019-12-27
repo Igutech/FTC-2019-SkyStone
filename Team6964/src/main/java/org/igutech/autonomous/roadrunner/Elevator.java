@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -27,7 +28,7 @@ public class Elevator {
     public static double GEAR_RATIO = 1; // output (spool) speed / input (motor) speed
 
     // the operating range of the elevator is restricted to [0, MAX_HEIGHT]
-    public static double MAX_HEIGHT = 10; // in
+    public static double MAX_HEIGHT = 40; // in
 
     public static PIDCoefficients PID = new PIDCoefficients(0, 0, 0);
 
@@ -35,7 +36,7 @@ public class Elevator {
     public static double MAX_ACCEL = 10; // in/s^2
     public static double MAX_JERK = 20; // in/s^3
 
-    public static double kV = 0;
+    public static double kV = 0.048;
     public static double kA = 0;
     public static double kStatic = 0;
 
@@ -61,10 +62,10 @@ public class Elevator {
     }
 
     public Elevator(HardwareMap hardwareMap) {
-        motor = hardwareMap.get(DcMotorEx.class, "elevatorMotor");
+        motor = hardwareMap.get(DcMotorEx.class, "stoneElevator");
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // if necessary, reverse the motor so "up" is positive
-        // motor.setDirection(DcMotorSimple.Direction.REVERSE);
+         motor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 

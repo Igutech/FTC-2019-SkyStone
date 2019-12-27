@@ -13,7 +13,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.igutech.autonomous.roadrunner.IguMecanumDriveBase;
 import org.igutech.autonomous.util.AutoCVUtil;
 import org.igutech.autonomous.util.AutoUtilManager;
-
 import kotlin.Unit;
 
 @Config
@@ -35,6 +34,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
         AutoUtilManager manager = new AutoUtilManager(hardwareMap, "TestRoadrunner");
         manager.getDriveUtil().resetEncoders();
         IguMecanumDriveBase drive = new IguMecanumDriveBase(manager);
+        drive.setPoseEstimate(new Pose2d(-40.0,55.0,Math.toRadians(-180.0)));
 
         manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
         manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
@@ -64,6 +64,10 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
        new Thread(() -> {
            manager.getCvUtil().shutdown();
        }).start();
+
+
+
+
         //int pattern = 2;
         if (pattern == AutoCVUtil.Pattern.PATTERN_B) {
             dashboardTelemetry.addData("thing","1");

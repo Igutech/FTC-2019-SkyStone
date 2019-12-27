@@ -1,6 +1,5 @@
 package org.igutech.autonomous.roadrunner;
 
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -21,7 +20,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
 import org.igutech.autonomous.tuning.DashboardUtil;
 
 import java.util.ArrayList;
@@ -29,8 +27,9 @@ import java.util.List;
 
 @Config
 public abstract class MecanumDriveBase extends MecanumDrive {
-    public  static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.3,0,0);
+    public  static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.3,0,0.075);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.2,0,0);
+    public static PIDCoefficients MOTOR_VELO_PID = new PIDCoefficients(0.0,0.0,0.0);
     private FtcDashboard dashboard;
     private NanoClock clock;
 
@@ -39,6 +38,7 @@ public abstract class MecanumDriveBase extends MecanumDrive {
     private PIDFController turnController;
     private MotionProfile turnProfile;
     private double turnStart;
+    private double startTime, waitTime;
 
     private DriveConstraints constraints;
     private TrajectoryFollower follower;
@@ -48,19 +48,19 @@ public abstract class MecanumDriveBase extends MecanumDrive {
     public enum Mode {
         IDLE,
         TURN,
-        FOLLOW_TRAJECTORY
+        FOLLOW_TRAJECTORY,
+        WAIT
     }
     public static  double TRACK_WIDTH = 13.17; //13.17
     //private static final double kV = .02167; // Automatically tuned (R^2=.99) distance between the wheels
     //private static final double kV = .018; // Manually tuned how fast it should respond
-    public static  double kV = .015; // Manually tuned how fast it should respond
+    public static  double kV = 0.0173; // Manually tuned how fast it should respond
     private static final double kA = 0; // Using built in motor velocity PID, don't tune this
     private static final double kStatic = 0; // Using built in motor velocity PID, don't tune this
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            30.0, 30.0, 0.0,
+            30.0, 20.0, 0.0,
             Math.toRadians(90), Math.toRadians(90.0), 0.0
     );
-
 
     public MecanumDriveBase() {
         super(kV,kA,kStatic,TRACK_WIDTH);
@@ -99,6 +99,16 @@ public abstract class MecanumDriveBase extends MecanumDrive {
         turn(angle);
         waitForIdle();
     }
+    public void waitFor(double time){
+        startTime = clock.seconds();
+        waitTime = time;
+        mode = Mode.WAIT;
+    }
+    public void waitForSync(double time)
+    {
+        waitFor(time);
+        waitForIdle();
+    }
 
     public void followTrajectory(Trajectory trajectory) {
         follower.followTrajectory(trajectory);
@@ -117,6 +127,8 @@ public abstract class MecanumDriveBase extends MecanumDrive {
             case TURN:
                 return new Pose2d(0, 0, turnController.getLastError());
             case IDLE:
+                return new Pose2d();
+            case WAIT:
                 return new Pose2d();
         }
         throw new AssertionError();
@@ -187,6 +199,14 @@ public abstract class MecanumDriveBase extends MecanumDrive {
                     setDriveSignal(new DriveSignal());
                 }
 
+                break;
+            }
+            case WAIT: {
+                double t = clock.seconds() - startTime;
+                setDriveSignal(follower.update(currentPose));
+                if (t >= waitTime) {
+                    mode = Mode.IDLE;
+                }
                 break;
             }
         }

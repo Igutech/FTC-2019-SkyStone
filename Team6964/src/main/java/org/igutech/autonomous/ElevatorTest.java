@@ -22,10 +22,10 @@ public class ElevatorTest extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (!isStopRequested()) {
-            elevator.setHeight(Elevator.MAX_HEIGHT * Math.random());
+            elevator.setHeight(10.0);
 
             double startTime = clock.seconds();
-            while (!isStopRequested() && (clock.seconds() - startTime) < 5) {
+            while (!isStopRequested()) {
                 elevator.update();
             }
         }

@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.igutech.autonomous.roadrunner.Elevator;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +16,7 @@ public class Hardware {
     private HardwareMap hardwareMap;
     private Map<String, DcMotor> motors;
     private Map<String, DcMotorImplEx> DcMotorImplExMotor;
-
+    private Map<String, Elevator> elevator;
     private Map<String, Servo> servos;
     private Map<String, DigitalChannel> touchSensors;
 
@@ -27,8 +29,9 @@ public class Hardware {
         this.hardwareMap = hardwareMap;
         this.motors = new HashMap<>();
         this.servos = new HashMap<>();
+        this.elevator = new HashMap<>();
         this.touchSensors = new HashMap<>();
-
+        elevator.put("elevator",new Elevator(hardwareMap));
         motors.put("frontleft", hardwareMap.dcMotor.get("frontleft"));
         motors.put("frontright", hardwareMap.dcMotor.get("frontright"));
         motors.put("backleft", hardwareMap.dcMotor.get("backleft"));
@@ -44,7 +47,8 @@ public class Hardware {
         motors.get("backleft").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motors.get("left_intake").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motors.get("right_intake").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motors.get("stoneElevator").setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+       // motors.get("stoneElevator").setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         motors.get("frontright").setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motors.get("frontleft").setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -63,8 +67,11 @@ public class Hardware {
         servos.put("TransferServo", hardwareMap.servo.get("TransferServo"));
         servos.put("CapServo", hardwareMap.servo.get("CapServo"));
 
+
+      //  touchSensors.put("BeamBreaker",hardwareMap.get(DigitalChannel.class, "beam"));
+       // touchSensors.get("BeamBreaker").setMode(DigitalChannel.Mode.INPUT);
+
 //        touchSensors.put("elevator_switch", hardwareMap.get(DigitalChannel.class, "elevator_switch"));
-//        touchSensors.get("elevator_switch").setMode(DigitalChannel.Mode.INPUT);
 
     }
 
@@ -85,6 +92,10 @@ public class Hardware {
     public Map<String, DcMotor> getMotors() {
         return motors;
     }
+    public Map<String, Elevator> getElevator() {
+        return elevator;
+    }
+
 
     /**
      * Get a map of servos
