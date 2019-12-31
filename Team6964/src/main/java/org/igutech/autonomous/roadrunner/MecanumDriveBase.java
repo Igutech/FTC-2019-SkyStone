@@ -27,9 +27,10 @@ import java.util.List;
 
 @Config
 public abstract class MecanumDriveBase extends MecanumDrive {
-    public  static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.3,0,0.075);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.2,0,0);
-    public static PIDCoefficients MOTOR_VELO_PID = new PIDCoefficients(0.0,0.0,0.0);
+ //   public  static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.3,0,0.075);
+  //  public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.2,0,0);
+    public  static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.3,0.4,0.3);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(4,0.6,0.2);
     private FtcDashboard dashboard;
     private NanoClock clock;
 
@@ -51,15 +52,14 @@ public abstract class MecanumDriveBase extends MecanumDrive {
         FOLLOW_TRAJECTORY,
         WAIT
     }
-    public static  double TRACK_WIDTH = 13.17; //13.17
-    //private static final double kV = .02167; // Automatically tuned (R^2=.99) distance between the wheels
-    //private static final double kV = .018; // Manually tuned how fast it should respond
-    public static  double kV = 0.0173; // Manually tuned how fast it should respond
+    // public static  double TRACK_WIDTH = 13.17; //13.17
+    public static  double TRACK_WIDTH = 16.25; //13.17
+    public static  double kV = 0.02; // Manually tuned how fast it should respond
     private static final double kA = 0; // Using built in motor velocity PID, don't tune this
     private static final double kStatic = 0; // Using built in motor velocity PID, don't tune this
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            30.0, 20.0, 0.0,
-            Math.toRadians(90), Math.toRadians(90.0), 0.0
+            40.0, 30, 0.0,
+            Math.toRadians(90), Math.toRadians(90), 0.0
     );
 
     public MecanumDriveBase() {
@@ -161,6 +161,9 @@ public abstract class MecanumDriveBase extends MecanumDrive {
                 double t = clock.seconds() - turnStart;
 
                 MotionState targetState = turnProfile.get(t);
+
+                turnController.setTargetPosition(targetState.getX());
+
                 double targetOmega = targetState.getV();
                 double targetAlpha = targetState.getA();
                 double correction = turnController.update(currentPose.getHeading(), targetOmega);
@@ -249,4 +252,8 @@ public abstract class MecanumDriveBase extends MecanumDrive {
     public abstract PIDCoefficients getPIDCoefficients(DcMotor.RunMode runMode);
 
     public abstract void setPIDCoefficients(DcMotor.RunMode runMode, PIDCoefficients coefficients);
+
+    public TrajectoryFollower getFollower() {
+        return follower;
+    }
 }

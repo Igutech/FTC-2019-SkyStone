@@ -311,7 +311,7 @@ public class AutoDriveUtil {
         /**
          * Wheel circumference in inches
          */
-        private static final double CIRCUMFERENCE = 12.5663706144d;
+        private static final double CIRCUMFERENCE = 12.3684502631d;
         private static final MotorConfigurationType MOTOR_CONFIG = MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
         private static final double TICKS_PER_REVOLUTION = MOTOR_CONFIG.getTicksPerRev();
 
