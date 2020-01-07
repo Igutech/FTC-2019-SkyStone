@@ -1,10 +1,10 @@
 package org.igutech.autonomous;
 
-        import com.acmerobotics.roadrunner.util.NanoClock;
-        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.acmerobotics.roadrunner.util.NanoClock;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-        import org.igutech.autonomous.roadrunner.Elevator;
+import org.igutech.autonomous.roadrunner.Elevator;
 
 /*
  * Simple test of motion-profiled elevator autonomous operation. The elevator should move *smoothly*
@@ -22,10 +22,10 @@ public class ElevatorTest extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (!isStopRequested()) {
-            elevator.setHeight(10.0);
+            elevator.setHeight(Elevator.MAX_HEIGHT * Math.random());
 
             double startTime = clock.seconds();
-            while (!isStopRequested()) {
+            while (!isStopRequested() && (clock.seconds() - startTime) < 5) {
                 elevator.update();
             }
         }

@@ -20,9 +20,8 @@ public class FollowerPIDTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        AutoUtilManager manager = new AutoUtilManager(hardwareMap, "TestRoadrunner");
+        AutoUtilManager manager = new AutoUtilManager(hardwareMap, "FollowerPIDTuner");
         IguMecanumDriveBase drive = new IguMecanumDriveBase(manager);
-
 
         drive.setPoseEstimate(new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0));
 
@@ -30,12 +29,13 @@ public class FollowerPIDTuner extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        drive.followTrajectory(drive.trajectoryBuilder().forward(DISTANCE).build());
-
-        while (!isStopRequested() && drive.isBusy()) {
-            drive.update();
-            System.out.println(String.format("\t%.5f\t%.5f", drive.getFollower().elapsedTime(), drive.getLastError().getX()));
+        while (!isStopRequested()) {
+            drive.followTrajectorySync(
+                    drive.trajectoryBuilder()
+                            .forward(DISTANCE)
+                            .build()
+            );
+            drive.turnSync(Math.toRadians(90));
         }
-        System.out.println("DONE");
     }
 }

@@ -1,6 +1,5 @@
 package org.igutech.autonomous;
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
@@ -12,20 +11,14 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import static org.opencv.core.CvType.CV_8UC1;
 
-@Config
-class TestSamplePipeLine extends OpenCvPipeline {
-    int left_hue;
-    int right_hue;
+public class SamplePipeLine extends OpenCvPipeline {
+    public int left_hue;
+    public int right_hue;
 
-    int left_br;
-    int right_br;
+    public int left_br;
+    public int right_br;
 
-    int pattern;
-    //    public static double left_one=9f / 32f;
-//    public static double left_two=(5f / 32f);
-//    public static double left_three=(15f / 32f);
-//    public static double left_four=(7f / 32f);
-//
+    public int pattern;
 
     public static int right_one = 160;
     public static int right_two = 190;
@@ -38,51 +31,30 @@ class TestSamplePipeLine extends OpenCvPipeline {
     public static int left_four = 210;
 
 
+
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
-//    public static double right_one=0.5;
-//    public static double right_two=0.156;
-//    public static double right_three=0.468;
-//    public static double right_four=0.218;
-
 
     @Override
     public Mat processFrame(Mat input) {
 
         input.convertTo(input, CV_8UC1, 1, 10);
 
-//        int[] left_rect = {
-//                (int) (input.cols() * left_one),
-//                (int) (input.rows() * left_two),
-//                (int) (input.cols() * left_three ),
-//                (int) (input.rows() * left_four)
-//        };
         int[] left_rect = {
                 left_one,
                 left_two,
-                left_three,
+                left_three ,
                 left_four
         };
-        dashboardTelemetry.addData("1", (int) (input.cols() * left_one));
-        dashboardTelemetry.addData("2", (int) (input.rows() * left_two));
-        dashboardTelemetry.addData("3", (int) (input.cols() * left_three));
-        dashboardTelemetry.addData("4", (int) (input.rows() * left_four));
-        dashboardTelemetry.update();
 
-
-//        int[] right_rect = {
-//                (int) (input.cols() * right_one),
-//                (int) (input.rows() * right_two),
-//                (int) (input.cols() * right_three),
-//                (int) (input.rows() * right_four)
-//        };
 
         int[] right_rect = {
-               right_one,
-                 right_two,
-               right_three,
+                right_one,
+                right_two,
+                right_three,
                 right_four
         };
+
         Imgproc.rectangle(
                 input,
                 new Point(
@@ -122,18 +94,18 @@ class TestSamplePipeLine extends OpenCvPipeline {
         //Patern 1 = Stone Stone Skystone
         //Pattern 2 = Stone Skystone Stone
         //Pattern 3 = Skystone Stone Stone
-        if (left_br > 100 && right_br > 100) pattern = 3;
-        else if (left_br > 100 && right_br < 100) pattern = 1;
-        else if (left_br < 100 && right_br > 100) pattern = 2;
-//        else if (left_br < 100 && right_br < 100) {
-//            if (left_br > right_br) {
-//                pattern = 1;
-//            } else if (left_br < right_br) {
-//                pattern = 2;
-//            } else {
-//                pattern = 3;
-//            }
-//        }
+        if (left_br > 100 && right_br > 100) pattern = 1;
+        else if (left_br > 100 && right_br < 100) pattern = 2;
+        else if (left_br < 100 && right_br > 100) pattern = 3;
+        else if (left_br < 100 && right_br < 100) {
+            if (left_br > right_br) {
+                pattern = 1;
+            } else if (left_br < right_br) {
+                pattern = 2;
+            } else {
+                pattern = 3;
+            }
+        }
 
         return input;
     }

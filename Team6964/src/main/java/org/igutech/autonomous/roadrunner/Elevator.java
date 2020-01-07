@@ -36,7 +36,7 @@ public class Elevator {
     public static double MAX_ACCEL = 10; // in/s^2
     public static double MAX_JERK = 20; // in/s^3
 
-    public static double kV = 0.048;
+    public static double kV = 0.005;
     public static double kA = 0;
     public static double kStatic = 0;
 

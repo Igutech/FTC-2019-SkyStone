@@ -15,7 +15,6 @@ public class Hardware {
 
     private HardwareMap hardwareMap;
     private Map<String, DcMotor> motors;
-    private Map<String, DcMotorImplEx> DcMotorImplExMotor;
     private Map<String, Elevator> elevator;
     private Map<String, Servo> servos;
     private Map<String, DigitalChannel> touchSensors;
@@ -47,7 +46,7 @@ public class Hardware {
         motors.get("backleft").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motors.get("left_intake").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motors.get("right_intake").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-       // motors.get("stoneElevator").setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motors.get("stoneElevator").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         motors.get("frontright").setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -56,7 +55,7 @@ public class Hardware {
         motors.get("backleft").setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motors.get("left_intake").setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motors.get("right_intake").setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //motors.get("stoneElevator").setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motors.get("stoneElevator").setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
 
@@ -68,10 +67,11 @@ public class Hardware {
         servos.put("CapServo", hardwareMap.servo.get("CapServo"));
 
 
-      //  touchSensors.put("BeamBreaker",hardwareMap.get(DigitalChannel.class, "beam"));
-       // touchSensors.get("BeamBreaker").setMode(DigitalChannel.Mode.INPUT);
+/*        touchSensors.put("BeamBreaker",hardwareMap.get(DigitalChannel.class, "beam"));
+        touchSensors.get("BeamBreaker").setMode(DigitalChannel.Mode.INPUT);
 
-//        touchSensors.put("elevator_switch", hardwareMap.get(DigitalChannel.class, "elevator_switch"));
+        touchSensors.put("elevator_switch", hardwareMap.get(DigitalChannel.class, "elevator_switch"));
+        touchSensors.get("elevator_switch").setMode(DigitalChannel.Mode.INPUT);*/
 
     }
 

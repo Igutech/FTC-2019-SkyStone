@@ -13,7 +13,7 @@ public class TurnTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        AutoUtilManager manager = new AutoUtilManager(hardwareMap, "TestRoadrunner");
+        AutoUtilManager manager = new AutoUtilManager(hardwareMap, "TurnTest");
         manager.getDriveUtil().resetEncoders();
         IguMecanumDriveBase drive = new IguMecanumDriveBase(manager);
         telemetry.addData("ready","to go");

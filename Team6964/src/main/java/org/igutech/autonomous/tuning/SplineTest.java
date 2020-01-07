@@ -13,7 +13,7 @@ public class SplineTest extends LinearOpMode {
     @Override
     public void runOpMode()
     {
-        AutoUtilManager manager = new AutoUtilManager(hardwareMap, "TestRoadrunner");
+        AutoUtilManager manager = new AutoUtilManager(hardwareMap, "SplineTest");
         manager.getDriveUtil().resetEncoders();
         IguMecanumDriveBase drive = new IguMecanumDriveBase(manager);
         waitForStart();

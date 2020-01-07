@@ -3,16 +3,16 @@ package org.igutech.teleop.Modules;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
+
+import org.igutech.utils.control.*;
+
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.apache.commons.math3.util.FastMath;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.igutech.autonomous.roadrunner.Elevator;
 import org.igutech.teleop.Module;
 import org.igutech.teleop.Teleop;
 import org.igutech.utils.FTCMath;
-import org.igutech.utils.control.PControllers;
-import org.igutech.config.Hardware.*;
 
 @Config
 public class stoneElevator extends Module {
@@ -31,20 +31,18 @@ public class stoneElevator extends Module {
     private final double MAX_SPEED_LIMIT = 0.4;
 
     private int liftPosition;
-    private int liftEncoderOffset;
+    private int liftEncoderOffset=4;
     private static final int TICK_PER_STONE = 5000;
 
     private boolean toggleA = false;
-    private boolean toggleB = false;
+    private boolean toggleY = false;
     private boolean toggleX = false;
     private boolean previousButtonPositionA = false;
-    private boolean previousButtonPositionB = false;
+    private boolean previousButtonPositionY = false;
     private boolean previousButtonPositionX = false;
-    double height = 0.0;
+
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
-    Elevator elevator = new Elevator(Teleop.getInstance().hardwareMap);
-
 
     public stoneElevator() {
         super(700, "stoneElevator");
@@ -79,63 +77,48 @@ public class stoneElevator extends Module {
         liftPosition = Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition();
 
 //        if(Teleop.getInstance().getHardware().getTouchSensors().get("elevator_switch").getState())
-        Teleop.getInstance().getHardware().getMotors().get("stoneElevator").setPower(elevatorPower);
+//        Teleop.getInstance().getHardware().getMotors().get("stoneElevator").setPower(elevatorPower);
 //        else if(Teleop.getInstance().getHardware().getTouchSensors().get("elevator_switch").getState()==false & elevatorPower<=0
 //        )
-       /* leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftMotor.setTargetPosition(5000);
-        leftMotor.setPower(0.25);*/
 
 
-
+        if (elevatorPower != 0.0) {
+            Teleop.getInstance().getHardware().getMotors().get("stoneElevator").setPower(elevatorPower);
+        } else {
+            PID.pControl(Teleop.getInstance().getHardware().getMotors().get("stoneElevator"),
+                    Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition(),
+                    Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition());
+        }
         //b rotation,a grabber, x for transfer
-//        boolean currentButtonPositionA = gamepadService.getDigital(2, "a");
-//
-//        if (currentButtonPositionA && !previousButtonPositionA) {
-//          height=height+10;
-//        }
-//        previousButtonPositionA = currentButtonPositionA;
-//        if (elevatorPower != 0.0) {
-//            Teleop.getInstance().getHardware().getMotors().get("stoneElevator").setPower(elevatorPower);
-//        }else if(gamepadService.getDigital(1,"dpad_up"))
-//        {
-//            height=height+10;
-//            Teleop.getInstance().getHardware().getElevator().get("elevator").setHeight(height);
-//
-//            Teleop.getInstance().telemetry.addData("dpad",height);
-//        }
-//        else if(gamepadService.getDigital(1,"dpad_down"))
-//        {
-//            height=height-10;
-//
-//            Teleop.getInstance().getHardware().getElevator().get("elevator").setHeight(0);
-//            Teleop.getInstance().telemetry.addData("dpad","pressed");
-//            Teleop.getInstance().getHardware().getElevator().get("elevator").update();
-//
-//        }
-//        Teleop.getInstance().getHardware().getElevator().get("elevator").update();
+        boolean currentButtonPositionA = gamepadService.getDigital(2, "a");
 
-        Teleop.getInstance().telemetry.addData("height",height);
-        Teleop.getInstance().telemetry.addData("encoder",liftPosition);
+        if (currentButtonPositionA && !previousButtonPositionA) {
+            toggleA = !toggleA;
+            if (toggleA) {
+                Teleop.getInstance().getHardware().getServos().get("GrabberServo").setPosition(0.3);
+            }
+            if (!toggleA) {
+                Teleop.getInstance().getHardware().getServos().get("GrabberServo").setPosition(0.1);
+            }
+        }
+        previousButtonPositionA = currentButtonPositionA;
 
+        boolean currentButtonPositionY = gamepadService.getDigital(2, "y");
 
-
-        boolean currentButtonPositionB = gamepadService.getDigital(2, "y");
-
-        if (currentButtonPositionB && !previousButtonPositionB) {
-            toggleB = !toggleB;
-            if (toggleB) {
+        if (currentButtonPositionY && !previousButtonPositionY) {
+            toggleY = !toggleY;
+            if (toggleY) {
                 Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.95);
             }
-            if (!toggleB) {
+            if (!toggleY) {
                 Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.28);
             }
         }
-        previousButtonPositionB = currentButtonPositionB;
+        previousButtonPositionY = currentButtonPositionY;
+        Teleop.getInstance().telemetry.addData("elevator",liftPosition);
 
-
-//        dashboardTelemetry.addData("liftpos",liftPosition);
-//        dashboardTelemetry.update();
+        dashboardTelemetry.addData("liftpos",liftPosition);
+        dashboardTelemetry.update();
 
 
     }

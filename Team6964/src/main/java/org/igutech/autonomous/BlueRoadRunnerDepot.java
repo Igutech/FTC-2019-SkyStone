@@ -29,8 +29,6 @@ import static org.igutech.autonomous.roadrunner.MecanumDriveBase.BASE_CONSTRAINT
 public class BlueRoadRunnerDepot extends LinearOpMode {
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
-    public static int pattern = 1;
-    public static int angle = 90;
     public static int strafe = 5;
 
     public static int forward = 100;
@@ -76,102 +74,21 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
         }).start();
 
         if (pattern == AutoCVUtil.Pattern.PATTERN_A) {
-            Trajectory test = drive.trajectoryBuilder()
-                    .addMarker(() -> {
-                        manager.getHardware().getMotors().get("left_intake").setPower(0.75);
-                        manager.getHardware().getMotors().get("right_intake").setPower(-0.75);
-                        return Unit.INSTANCE;
-                    })
-                    .back(10.0)
-                    .strafeRight(15)
-                    .lineTo(new Vector2d(-50,25), new LinearInterpolator(Math.toRadians(0.0),Math.toRadians(-140)))
-                    .lineTo(new Vector2d(-50,15), new LinearInterpolator(Math.toRadians(-140),Math.toRadians(0)))
-                    .addMarker(7.0,() -> {
-                        manager.getHardware().getMotors().get("left_intake").setPower(0.0);
-                        manager.getHardware().getMotors().get("right_intake").setPower(-0.0);
-                        return Unit.INSTANCE;
-                    })
-                    .addMarker(7.5,() -> {
-                        manager.getHardware().getServos().get("TransferServo").setPosition(0.75);
-                        return Unit.INSTANCE;
-                    })
-                    .addMarker(8.5,() -> {
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.3);
-                        return Unit.INSTANCE;
-                    })
-                    .lineTo( new Vector2d(-40.0,40.0), new LinearInterpolator(Math.toRadians(-140.0),Math.toRadians(0.0)))
-                    .lineTo( new Vector2d(10.0,37.0), new LinearInterpolator(Math.toRadians(-140.0),Math.toRadians(150.0)))
 
-                    .lineTo(new Vector2d(45.0,40.0),  new LinearInterpolator(Math.toRadians(10.0),Math.toRadians(80.0)))
-                    .lineTo( new Vector2d(45.0,22.0),  new LinearInterpolator(Math.toRadians(80.0),Math.toRadians(0.0)))
-
-
-                    .build();
-
-
-
-            drive.followTrajectorySync(test);
-            manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.6);
-            manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.9);
-            drive.waitForSync(1.0);
-
-            Trajectory two = drive.trajectoryBuilder()
-                    .forward(35)
-                    .build();
-            drive.followTrajectorySync(two);
-            drive.turnSync(Math.toRadians(350));
-
-            manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
-            sleep(600);
-            manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-            sleep(400);
-            manager.getHardware().getServos().get("RotationServo").setPosition(0.95);
-            sleep(400);
-
-            manager.getHardware().getMotors().get("stoneElevator").setPower(-0.6);
-            sleep(600);
-            manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
-
-            manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
-            sleep(600);
-            manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-            sleep(400);
-            manager.getHardware().getServos().get("RotationServo").setPosition(0.28);
-            sleep(600);
-
-            manager.getHardware().getMotors().get("stoneElevator").setPower(-0.6);
-            sleep(600);
-            manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-            manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
-            manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
-
-
-
-            Trajectory three = drive.trajectoryBuilder()
-                    .addMarker(() -> {
-                        manager.getHardware().getMotors().get("left_intake").setPower(0.75);
-                        manager.getHardware().getMotors().get("right_intake").setPower(-0.75);
-                        return Unit.INSTANCE;
-                    })
-                    .strafeLeft(6)
-                    .forward(80)
-                    .lineTo(new Vector2d(-65,30), new LinearInterpolator(Math.toRadians(0), Math.toRadians(180)))
-                    .lineTo(new Vector2d(-65,10), new LinearInterpolator(Math.toRadians(180), Math.toRadians(-10)))
-
-                    .build();
-            drive.followTrajectorySync(three);
         }
 
         if (pattern == AutoCVUtil.Pattern.PATTERN_B) {
+
+            //get ready for turn
             Trajectory patternB = drive.trajectoryBuilder()
                     .strafeRight(20.0)
                     .forward(17.0)
-
-                    // .lineTo(new Vector2d(50.0, 35.0), new LinearInterpolator(Math.toRadians(0.0), Math.toRadians(90.0)))
                     .build();
-
             drive.followTrajectorySync(patternB);
+
             drive.turnSync(Math.toRadians(178));
+
+            //intake then drive to foundation
             Trajectory patternB2 = drive.trajectoryBuilder()
                     .addMarker(() -> {
                         manager.getHardware().getMotors().get("left_intake").setPower(0.75);
@@ -186,17 +103,16 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.3);
                         return Unit.INSTANCE;
                     })
-
-
                     .strafeLeft(28)
                     .forward(5)
                     .strafeRight(28)
-
-
                     .back(75)
                     .build();
             drive.followTrajectorySync(patternB2);
+
             drive.turnSync(Math.toRadians(-90));
+
+            //back up into the foundation
             Trajectory patternB3 = drive.trajectoryBuilder()
                     .addMarker(() -> {
                         manager.getHardware().getMotors().get("left_intake").setPower(0.0);
@@ -206,15 +122,20 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                     .back(6)
                     .build();
             drive.followTrajectorySync(patternB3);
+
+            //latch onto foundation
             manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.6);
             manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.9);
             drive.waitForSync(0.5);
 
-            Trajectory two = drive.trajectoryBuilder()
+            //move the foundation forward
+            Trajectory patternB4 = drive.trajectoryBuilder()
                     .forward(45)
                     .build();
-            drive.followTrajectorySync(two);
-            drive.turnSync(Math.toRadians(angle));
+            drive.followTrajectorySync(patternB4);
+
+            drive.turnSync(Math.toRadians(90));
+
             manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
             sleep(600);
             manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
@@ -240,29 +161,28 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
             manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
             drive.waitForSync(0.2);
 
-            Trajectory patternB4 = new TrajectoryBuilder(drive.getPoseEstimate(), slowConstraints)
+            //park
+            Trajectory patternB5 = new TrajectoryBuilder(drive.getPoseEstimate(), slowConstraints)
                     .back(45)
                     .strafeLeft(8)
                     .forward(75)
                     .build();
-            drive.followTrajectorySync(patternB4);
-
-
-
+            drive.followTrajectorySync(patternB5);
         }
 
         if (pattern == AutoCVUtil.Pattern.PATTERN_C ) {
-            Trajectory patternB = drive.trajectoryBuilder()
+
+            //position to turn
+            Trajectory patternC = drive.trajectoryBuilder()
                     .strafeRight(20.0)
                     .forward(10.0)
-
-                    // .lineTo(new Vector2d(50.0, 35.0), new LinearInterpolator(Math.toRadians(0.0), Math.toRadians(90.0)))
                     .build();
-
-            drive.followTrajectorySync(patternB);
+            drive.followTrajectorySync(patternC);
 
             drive.turnSync(Math.toRadians(178));
-            Trajectory patternB2 = drive.trajectoryBuilder()
+
+            //Intake and move to foundation
+            Trajectory patternC2 = drive.trajectoryBuilder()
 
                     .addMarker(() -> {
                         manager.getHardware().getMotors().get("left_intake").setPower(0.75);
@@ -278,18 +198,17 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.3);
                         return Unit.INSTANCE;
                     })
-
-
                     .strafeLeft(33)
                     .forward(5)
                     .strafeRight(28)
-
-
                     .back(80)
                     .build();
-            drive.followTrajectorySync(patternB2);
+            drive.followTrajectorySync(patternC2);
+
             drive.turnSync(Math.toRadians(-90));
-            Trajectory patternB3 = drive.trajectoryBuilder()
+
+            //line up with the foundation
+            Trajectory patternC3 = drive.trajectoryBuilder()
                     .addMarker(() -> {
                         manager.getHardware().getMotors().get("left_intake").setPower(0.0);
                         manager.getHardware().getMotors().get("right_intake").setPower(0.0);
@@ -297,16 +216,20 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                     })
                     .back(6)
                     .build();
-            drive.followTrajectorySync(patternB3);
+            drive.followTrajectorySync(patternC3);
+
+            //latch on to foundation
             manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.6);
             manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.9);
             drive.waitForSync(0.5);
 
-            Trajectory two = drive.trajectoryBuilder()
+            //move foundation
+            Trajectory patternC4 = drive.trajectoryBuilder()
                     .forward(45)
                     .build();
-            drive.followTrajectorySync(two);
-            drive.turnSync(Math.toRadians(angle));
+            drive.followTrajectorySync(patternC4);
+            drive.turnSync(Math.toRadians(90));
+
             manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
             sleep(600);
             manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
@@ -332,12 +255,13 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
             manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
             drive.waitForSync(0.2);
 
-            Trajectory patternB4 = new TrajectoryBuilder(drive.getPoseEstimate(), slowConstraints)
+            //park
+            Trajectory patternC5 = new TrajectoryBuilder(drive.getPoseEstimate(), slowConstraints)
                     .back(45)
                     .strafeLeft(8)
                     .forward(75)
                     .build();
-            drive.followTrajectorySync(patternB4);
+            drive.followTrajectorySync(patternC5);
         }
 
         while (!isStopRequested() && drive.isBusy()) {
@@ -356,6 +280,10 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
     }
 
 }
+
+
+
+
 
 
 

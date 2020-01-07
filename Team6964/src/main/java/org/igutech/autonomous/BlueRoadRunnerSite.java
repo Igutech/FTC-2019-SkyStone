@@ -30,9 +30,6 @@ public class BlueRoadRunnerSite extends LinearOpMode
         IguMecanumDriveBase drive = new IguMecanumDriveBase(manager);
         Trajectory leftTrajectory = drive.trajectoryBuilder()
                 .forward(5)
-                //.forward(35.0)
-
-                //.splineTo(new Pose2d(30, 30, 0))
                 .build();
         while (!opModeIsActive() && !isStopRequested()) {
 

@@ -27,8 +27,6 @@ import java.util.List;
 
 @Config
 public abstract class MecanumDriveBase extends MecanumDrive {
- //   public  static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.3,0,0.075);
-  //  public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.2,0,0);
     public  static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.3,0.4,0.3);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(4,0.6,0.2);
     private FtcDashboard dashboard;
@@ -52,7 +50,6 @@ public abstract class MecanumDriveBase extends MecanumDrive {
         FOLLOW_TRAJECTORY,
         WAIT
     }
-    // public static  double TRACK_WIDTH = 13.17; //13.17
     public static  double TRACK_WIDTH = 16.25; //13.17
     public static  double kV = 0.02; // Manually tuned how fast it should respond
     private static final double kA = 0; // Using built in motor velocity PID, don't tune this

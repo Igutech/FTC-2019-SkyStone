@@ -26,7 +26,7 @@ public class DriveFFTuner extends LinearOpMode {
     public static final double DISTANCE = 100; // use to be 4*12
     @Override
     public void runOpMode() {
-        AutoUtilManager manager = new AutoUtilManager(hardwareMap, "RandomSamplePark");
+        AutoUtilManager manager = new AutoUtilManager(hardwareMap, "DriveFFTuner");
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         manager.getDriveUtil().resetEncoders();
         IguMecanumDriveBase drive = new IguMecanumDriveBase(manager);
