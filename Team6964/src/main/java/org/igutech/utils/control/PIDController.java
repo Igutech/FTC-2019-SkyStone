@@ -29,6 +29,8 @@ public class PIDController implements BasicController {
     public double update(double pv) {
         if (FastMath.abs(error(pv)) <= 1) return 0;
         double timeOffset = System.currentTimeMillis() - currentTimeMillis;
+        if (timeOffset < 1)
+            timeOffset = 1;
         timeOffset = Math.max(timeOffset, 1);
         timeOffset /= 1000;
         //Log.d("PID_CONTROLLER", "\t" + timeOffset + "");
@@ -40,6 +42,12 @@ public class PIDController implements BasicController {
         currentTimeMillis = System.currentTimeMillis();
         prevError = error(pv);
         return p + i + d;
+    }
+
+    public void reset(double pv) {
+        prevError = error(pv);
+        iTerm = 0;
+        currentTimeMillis = System.currentTimeMillis();
     }
 
     @Override
@@ -74,4 +82,6 @@ public class PIDController implements BasicController {
     public void setkD(double kD) {
         this.kD = kD;
     }
+
+
 }

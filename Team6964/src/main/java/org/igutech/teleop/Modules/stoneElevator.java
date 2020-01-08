@@ -6,7 +6,7 @@ import org.igutech.utils.control.PIDController;
 
 import static org.igutech.utils.FTCMath.clamp;
 
-public class ConceptElevator extends Module {
+public class stoneElevator extends Module {
 
     private GamepadService gamepadService;
     boolean reset = false;
@@ -31,8 +31,8 @@ public class ConceptElevator extends Module {
 
     PIDController elevatorController = new PIDController(0.5, 0, 0);
 
-    public ConceptElevator() {
-        super(750, "ConceptElevator");
+    public stoneElevator() {
+        super(750, "stoneElevator");
     }
 
     public void init() {
@@ -91,7 +91,6 @@ public class ConceptElevator extends Module {
         } else {
             Teleop.getInstance().getHardware().getMotors().get("stoneElevator").setPower(gamepadService.getAnalog(2, "right_stick_y"));
         }
-
 
     }
 
