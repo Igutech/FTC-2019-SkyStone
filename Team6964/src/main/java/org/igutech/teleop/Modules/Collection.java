@@ -8,7 +8,7 @@ public class Collection extends Module {
     private GamepadService gamepadService;
     private double leftTrigger=0.0;
     private boolean leftbumper = false;
-    public Collection(){super(700,"Collection");}
+    public Collection(){super(800,"Collection");}
 
     public void init() {gamepadService = (GamepadService) Teleop.getInstance().getService("GamepadService");}
 

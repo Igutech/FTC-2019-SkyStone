@@ -11,7 +11,7 @@ public class FoundationServo extends Module {
     private boolean currentButtonPosition = false;
 
     public FoundationServo() {
-        super(500, "FoundationServo");
+        super(300, "FoundationServo");
     }
 
     public void init() {

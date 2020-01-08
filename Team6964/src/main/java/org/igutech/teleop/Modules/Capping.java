@@ -11,7 +11,7 @@ public class Capping extends Module {
     private boolean previousButtonPositionX = false;
     private boolean currentButtonPositionX = false;
 
-    public Capping(){super(300,"Capping");}
+    public Capping(){super(100,"Capping");}
 
 
     public void init() {gamepadService = (GamepadService) Teleop.getInstance().getService("GamepadService");

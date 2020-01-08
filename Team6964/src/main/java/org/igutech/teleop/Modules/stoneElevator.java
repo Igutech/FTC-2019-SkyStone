@@ -32,7 +32,7 @@ public class stoneElevator extends Module {
     PIDController elevatorController = new PIDController(0.5, 0, 0);
 
     public stoneElevator() {
-        super(750, "stoneElevator");
+        super(700, "stoneElevator");
     }
 
     public void init() {
