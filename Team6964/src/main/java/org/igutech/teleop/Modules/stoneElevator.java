@@ -46,7 +46,7 @@ public class stoneElevator extends Module {
     public void loop() {
         currentPos = Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() - startPos;
         currentButtonPositionD_Up = gamepadService.getDigital(2, "dpad_up");
-        currentButtonPositionD_Down = gamepadService.getDigital(2, "dpad_up");
+        currentButtonPositionD_Down = gamepadService.getDigital(2, "dpad_down");
         if (NeedtoEstimatePos) {
             double estimatedPos = (currentPos - tickPerStone) / tickPerStone;
             if (estimatedPos < 0)
@@ -64,7 +64,7 @@ public class stoneElevator extends Module {
                 level++;
                 autoMode = true;
             } else if (currentButtonPositionD_Down && !previousButtonPositionD_Down) {
-                level++;
+                level--;
                 autoMode = true;
             }
         }
