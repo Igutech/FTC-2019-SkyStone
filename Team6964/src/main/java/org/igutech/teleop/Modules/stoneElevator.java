@@ -1,130 +1,98 @@
 package org.igutech.teleop.Modules;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
-
-import org.igutech.utils.control.*;
-
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-
-import org.apache.commons.math3.util.FastMath;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.igutech.teleop.Module;
 import org.igutech.teleop.Teleop;
-import org.igutech.utils.FTCMath;
+import org.igutech.utils.control.PIDController;
 
-@Config
-public class stoneElevator extends Module {
+import static org.igutech.utils.FTCMath.clamp;
+
+public class ConceptElevator extends Module {
 
     private GamepadService gamepadService;
-    public static double p = 0.03;
+    boolean reset = false;
+    double currentPos = 0;
+    double startPos;
 
-    private static final MotorConfigurationType MOTOR_CONFIG = MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
+    boolean previousButtonPositionD_Up = false;
+    boolean toggleD_Up = false;
+    boolean currentButtonPositionD_Up = false;
 
-    /**
-     * Window size in wheel rotations
-     */
-    private final double WINDOW_SIZE = 2.7; // Actual = 4.22
-    private double windowPosition = 0;
+    boolean previousButtonPositionD_Down = false;
+    boolean toggleD_Down = false;
+    boolean currentButtonPositionD_Down = false;
 
-    private final double MAX_SPEED_LIMIT = 0.4;
 
-    private int liftPosition;
-    private int liftEncoderOffset=4;
-    private static final int TICK_PER_STONE = 5000;
+    boolean autoMode = false;
+    boolean NeedtoEstimatePos = false;
 
-    private boolean toggleA = false;
-    private boolean toggleY = false;
-    private boolean toggleX = false;
-    private boolean previousButtonPositionA = false;
-    private boolean previousButtonPositionY = false;
-    private boolean previousButtonPositionX = false;
+    int level = 0;
+    final int tickPerStone = 1440;
 
-    FtcDashboard dashboard = FtcDashboard.getInstance();
-    Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
-    public stoneElevator() {
-        super(700, "stoneElevator");
+    PIDController elevatorController = new PIDController(0.5, 0, 0);
+
+    public ConceptElevator() {
+        super(750, "ConceptElevator");
     }
 
-    PControllers PID = new PControllers(p);
-
-    @Override
     public void init() {
         gamepadService = (GamepadService) Teleop.getInstance().getService("GamepadService");
-        liftPosition = 0;
-
     }
 
-    @Override
     public void start() {
-        liftEncoderOffset = Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition();
-
+        startPos = Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition();
     }
 
-    @Override
     public void loop() {
+        currentPos = Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() - startPos;
+        currentButtonPositionD_Up = gamepadService.getDigital(2, "dpad_up");
+        currentButtonPositionD_Down = gamepadService.getDigital(2, "dpad_up");
+        if (NeedtoEstimatePos) {
+            double estimatedPos = (currentPos - tickPerStone) / tickPerStone;
+            if (estimatedPos < 0)
+                estimatedPos = 0;
+            if (currentButtonPositionD_Up && !previousButtonPositionD_Up) {
+                level = (int) Math.floor(estimatedPos) + 1;
+                autoMode = true;
+            } else if (currentButtonPositionD_Down && !previousButtonPositionD_Down) {
+                level = (int) Math.floor(estimatedPos);
+                autoMode = true;
+            }
 
-        double elevatorPower = gamepadService.getAnalog(2, "right_stick_y");
-
-        double slowMoElevator = gamepadService.getAnalog(2, "right_trigger");
-        double vdMultElevator = FTCMath.lerp(1, 0.4, FastMath.abs(slowMoElevator));
-
-        elevatorPower *= vdMultElevator;
-
-        //liftPosition = toRotations(Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition(), liftEncoderOffset);
-        liftPosition = Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition();
-
-//        if(Teleop.getInstance().getHardware().getTouchSensors().get("elevator_switch").getState())
-//        Teleop.getInstance().getHardware().getMotors().get("stoneElevator").setPower(elevatorPower);
-//        else if(Teleop.getInstance().getHardware().getTouchSensors().get("elevator_switch").getState()==false & elevatorPower<=0
-//        )
-
-
-        if (elevatorPower != 0.0) {
-            Teleop.getInstance().getHardware().getMotors().get("stoneElevator").setPower(elevatorPower);
         } else {
-            PID.pControl(Teleop.getInstance().getHardware().getMotors().get("stoneElevator"),
-                    Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition(),
-                    Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition());
-        }
-        //b rotation,a grabber, x for transfer
-        boolean currentButtonPositionA = gamepadService.getDigital(2, "a");
-
-        if (currentButtonPositionA && !previousButtonPositionA) {
-            toggleA = !toggleA;
-            if (toggleA) {
-                Teleop.getInstance().getHardware().getServos().get("GrabberServo").setPosition(0.3);
-            }
-            if (!toggleA) {
-                Teleop.getInstance().getHardware().getServos().get("GrabberServo").setPosition(0.1);
+            if (currentButtonPositionD_Up && !previousButtonPositionD_Up) {
+                level++;
+                autoMode = true;
+            } else if (currentButtonPositionD_Down && !previousButtonPositionD_Down) {
+                level++;
+                autoMode = true;
             }
         }
-        previousButtonPositionA = currentButtonPositionA;
-
-        boolean currentButtonPositionY = gamepadService.getDigital(2, "y");
-
-        if (currentButtonPositionY && !previousButtonPositionY) {
-            toggleY = !toggleY;
-            if (toggleY) {
-                Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.95);
-            }
-            if (!toggleY) {
-                Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.28);
-            }
+        previousButtonPositionD_Down = currentButtonPositionD_Down;
+        previousButtonPositionD_Up = currentButtonPositionD_Up;
+        if (autoMode) {
+            NeedtoEstimatePos = false;
         }
-        previousButtonPositionY = currentButtonPositionY;
-        Teleop.getInstance().telemetry.addData("elevator",liftPosition);
 
-        dashboardTelemetry.addData("liftpos",liftPosition);
-        dashboardTelemetry.update();
+        if (Math.abs(gamepadService.getAnalog(2, "right_stick_y")) > 0.01) {
+            autoMode = false;
+            NeedtoEstimatePos = true;
+        }
+
+        if (autoMode) {
+            int setPoint = level * tickPerStone;
+            elevatorController.updateSetpoint(setPoint);
+            if (Math.abs(setPoint - Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition()) > 100) {
+                elevatorController.reset(Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition());
+            }
+            double power = elevatorController.update(Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition());
+            power = clamp(-0.5, 0.5, power);
+            Teleop.getInstance().getHardware().getMotors().get("stoneElevator").setPower(power);
+        } else {
+            Teleop.getInstance().getHardware().getMotors().get("stoneElevator").setPower(gamepadService.getAnalog(2, "right_stick_y"));
+        }
 
 
-    }
-
-    private double toRotations(int ticks, int offset) {
-        return (double) (ticks - offset) / MOTOR_CONFIG.getTicksPerRev();
     }
 
 }

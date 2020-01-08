@@ -1,4 +1,4 @@
-package org.igutech.autonomous;
+package org.igutech.autonomous.AutoPrograms;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;

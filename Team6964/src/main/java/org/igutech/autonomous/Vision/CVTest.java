@@ -1,4 +1,4 @@
-package org.igutech.autonomous;
+package org.igutech.autonomous.Vision;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
