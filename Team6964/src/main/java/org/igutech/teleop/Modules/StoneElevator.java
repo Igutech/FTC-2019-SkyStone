@@ -91,6 +91,7 @@ public class StoneElevator extends Module {
         }
 
         if (autoMode) {
+            level=(int)FTCMath.clamp(0,8,level);
             int setPoint = level * TICK_PER_STONE;
             elevatorController.updateSetpoint(setPoint);
             if (Math.abs(setPoint - Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition()) > 100) {
