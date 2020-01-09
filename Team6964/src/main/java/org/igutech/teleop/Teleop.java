@@ -10,8 +10,9 @@ import org.igutech.teleop.Modules.DisconnectWorkaround;
 import org.igutech.teleop.Modules.DriveTrain;
 import org.igutech.teleop.Modules.FoundationServo;
 import org.igutech.teleop.Modules.GamepadService;
+import org.igutech.teleop.Modules.StoneElevator;
 import org.igutech.teleop.Modules.Transfer;
-import org.igutech.teleop.Modules.stoneElevator;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +35,7 @@ public class Teleop extends OpMode {
         modules.add(new DriveTrain());
         modules.add(new Collection());
         modules.add(new FoundationServo());
-        modules.add(new stoneElevator());
+        modules.add(new StoneElevator());
         modules.add(new Transfer());
         modules.add(new Capping());
         
