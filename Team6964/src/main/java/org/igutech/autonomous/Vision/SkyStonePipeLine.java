@@ -11,7 +11,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 
-public class LABPipeLine extends OpenCvPipeline {
+public class SkyStonePipeLine extends OpenCvPipeline {
     private Mat matYCrCb = new Mat();
     private Mat matCb_left = new Mat();
     private Mat matCb_Right = new Mat();

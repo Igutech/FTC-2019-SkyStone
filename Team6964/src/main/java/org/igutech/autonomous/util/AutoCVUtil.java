@@ -1,6 +1,6 @@
 package org.igutech.autonomous.util;
 
-import org.igutech.autonomous.Vision.LABPipeLine;
+import org.igutech.autonomous.Vision.SkyStonePipeLine;
 import org.igutech.config.Hardware;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -11,7 +11,7 @@ public class AutoCVUtil {
     private Hardware hardware;
     OpenCvCamera phone_camera;
 
-    LABPipeLine stone_pipeline;
+    SkyStonePipeLine stone_pipeline;
     ;
     public AutoCVUtil(AutoUtilManager manager, Hardware hardware) {
         this.hardware = hardware;
@@ -19,7 +19,7 @@ public class AutoCVUtil {
         int cameraMonitorViewId = hardware.getHardwareMap().appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardware.getHardwareMap().appContext.getPackageName());
         phone_camera = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         phone_camera.openCameraDevice();
-        stone_pipeline = new LABPipeLine();
+        stone_pipeline = new SkyStonePipeLine();
         phone_camera.setPipeline(stone_pipeline);
 
 

@@ -12,12 +12,12 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 
 @Autonomous(group = "test")
-public class LABTest extends LinearOpMode {
+public class PipeLineTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         OpenCvCamera phone_camera;
 
-        LABPipeLine stone_pipeline;
+        SkyStonePipeLine stone_pipeline;
         FtcDashboard dashboard = FtcDashboard.getInstance();
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -25,7 +25,7 @@ public class LABTest extends LinearOpMode {
 
         phone_camera.openCameraDevice();
 
-        stone_pipeline = new LABPipeLine();
+        stone_pipeline = new SkyStonePipeLine();
         phone_camera.setPipeline(stone_pipeline);
         phone_camera.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
         waitForStart();
