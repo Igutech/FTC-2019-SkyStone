@@ -8,13 +8,15 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.Angle;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.MovingStatistics;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.igutech.autonomous.roadrunner.IguMecanumDriveBase;
 import org.igutech.autonomous.util.AutoUtilManager;
-
+@Disabled
 @Config
 @Autonomous(name="DriveTrackWidthTuner", group="igutech")
 public class DriveTrackWidthTuner extends LinearOpMode {

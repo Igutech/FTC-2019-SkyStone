@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.tuning.RampRegression;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -18,7 +19,7 @@ import org.igutech.autonomous.util.AutoUtilManager;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Disabled
 @Autonomous(name="DriveFFTuner", group="igutech")
 public class DriveFFTuner extends LinearOpMode {
 

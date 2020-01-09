@@ -13,6 +13,8 @@ import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -21,7 +23,7 @@ import org.igutech.autonomous.roadrunner.IguMecanumDriveBase;
 import org.igutech.autonomous.util.AutoUtilManager;
 
 import java.util.List;
-
+@Disabled
 @Config
 @Autonomous(group = "drive")
 public class DriveVelPIDTuner extends LinearOpMode {

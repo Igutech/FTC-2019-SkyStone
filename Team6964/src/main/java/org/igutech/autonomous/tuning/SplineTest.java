@@ -2,11 +2,13 @@ package org.igutech.autonomous.tuning;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.igutech.autonomous.roadrunner.IguMecanumDriveBase;
 import org.igutech.autonomous.util.AutoUtilManager;
-
+@Disabled
 @Autonomous(group = "drive")
 public class SplineTest extends LinearOpMode {
 
