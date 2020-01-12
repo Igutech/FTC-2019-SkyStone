@@ -88,9 +88,15 @@ public class SkyStonePipeLine extends OpenCvPipeline {
         left=left_mean.val[0];
         right=right_mean.val[0];
 
-        if(left-right>=45){pattern=1;}
-        if(right-left>=45){pattern=2;}
-        if(Math.abs(left-right)<=15){pattern=3;}
+
+
+        if(Math.abs(left-right)<=15){
+            pattern=3;
+        }else if(left<right){
+            pattern=1;
+        }else if(right<left){
+            pattern=2;
+        }
 
         return input;
 
