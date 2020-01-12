@@ -45,11 +45,11 @@ public class StoneElevator extends Module {
     }
 
     public void loop() {
-        Teleop.getInstance().telemetry.addData("start tick",startPos);
-        Teleop.getInstance().telemetry.addData("Current tick",
-                Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition());
-        Teleop.getInstance().telemetry.addData("power",gamepadService.getAnalog(2, "right_stick_y"));
-        Teleop.getInstance().getHardware().getMotors().get("stoneElevator").setPower(gamepadService.getAnalog(2, "right_stick_y"));
+//        Teleop.getInstance().telemetry.addData("start tick",startPos);
+//        Teleop.getInstance().telemetry.addData("Current tick",
+//                Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition());
+//        Teleop.getInstance().telemetry.addData("power",gamepadService.getAnalog(2, "right_stick_y"));
+//        Teleop.getInstance().getHardware().getMotors().get("stoneElevator").setPower(gamepadService.getAnalog(2, "right_stick_y"));
         currentButtonPositionDpadUp = gamepadService.getDigital(2, "dpad_up");
         currentButtonPositionDpadDown = gamepadService.getDigital(2, "dpad_down");
         currentButtonPositionRightBumper = gamepadService.getDigital(2, "right_bumper");

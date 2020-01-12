@@ -6,6 +6,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.path.heading.LinearInterpolator;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -16,9 +18,24 @@ import org.igutech.autonomous.util.AutoUtilManager;
 
 import kotlin.Unit;
 
+import static org.igutech.autonomous.roadrunner.MecanumDriveBase.BASE_CONSTRAINTS;
+
 @Config
 @Autonomous(name = "RedRoadRunnerDepot", group = "igutech")
 public class RedRoadRunnerDepot extends LinearOpMode {
+
+    public static int strafe = 25;
+    public static int strafe2 = 48;
+
+    public static int turn=90;
+
+    public static int forward = 10;
+
+    public static int x = 120;
+    public static int y = -38;
+    DriveConstraints slowConstraints = new DriveConstraints(
+            35, 20, BASE_CONSTRAINTS.maxJerk,
+            BASE_CONSTRAINTS.maxAngVel, BASE_CONSTRAINTS.maxAngAccel, BASE_CONSTRAINTS.maxAngJerk);
 
    FtcDashboard dashboard = FtcDashboard.getInstance();
    Telemetry dashboardTelemetry = dashboard.getTelemetry();
@@ -65,74 +82,91 @@ public class RedRoadRunnerDepot extends LinearOpMode {
 
       } else if (pattern == AutoCVUtil.Pattern.PATTERN_B) {
           Trajectory patternBMoveToFoundation=drive.trajectoryBuilder()
-                  .back(13.0)
+                  .back(10.0)
+
+                  .strafeRight(strafe2)
+
+                  .build();
+          drive.followTrajectorySync(patternBMoveToFoundation);
+
+          Trajectory two = new TrajectoryBuilder(drive.getPoseEstimate(), slowConstraints)
                   .addMarker(() -> {
                       manager.getHardware().getMotors().get("left_intake").setPower(0.75);
                       manager.getHardware().getMotors().get("right_intake").setPower(-0.75);
                       return Unit.INSTANCE;
                   })
-                  .strafeRight(42.0)
-                  .forward(7.0)
-                  .strafeLeft(17.0)
+                  .forward(forward)
+                  .strafeLeft(strafe)
+
+          .build();
+          drive.followTrajectorySync(two);
+
+          Trajectory three=drive.trajectoryBuilder()
+                  .setReversed(false)
+                  //now backing up toward the foundation x is how far back and y is how close to the foundation
                   .addMarker(() -> {
-                      manager.getHardware().getMotors().get("left_intake").setPower(0);
-                      manager.getHardware().getMotors().get("right_intake").setPower(0);
+                      manager.getHardware().getServos().get("TransferServo").setPosition(0.75);
                       return Unit.INSTANCE;
                   })
-                  //now backing up toward the foundation x is how far back and y is how close to the foundation
-                  .lineTo(new Vector2d(40.0,-38.0),new LinearInterpolator(Math.toRadians(180.0), Math.toRadians(0.0)))
-                  //turn so the foundation grabbers can latch
-                  .lineTo(new Vector2d(50.0,-38.0),new LinearInterpolator(Math.toRadians(180.0),Math.toRadians(90.0)))
-                  //back up a bit more for safety
-                  .lineTo(new Vector2d(50.0,-30.0),new LinearInterpolator(Math.toRadians(-90.0),Math.toRadians(0.0)))
+                  .lineTo(new Vector2d(x,y),new LinearInterpolator(Math.toRadians(180.0), Math.toRadians(0.0)))
+                  .addMarker(3.5,() -> {
+                      manager.getHardware().getServos().get("GrabberServo").setPosition(0.3);
+                      return Unit.INSTANCE;
+                  })
+//                  //turn so the foundation grabbers can latch
+                  .lineTo(new Vector2d(125,-38.0),new LinearInterpolator(Math.toRadians(180.0),Math.toRadians(90.0)))
+//                  //back up a bit more for safety
+                  .lineTo(new Vector2d(125,-30.0),new LinearInterpolator(Math.toRadians(-90.0),Math.toRadians(0.0)))
                   .build();
-          drive.followTrajectorySync(patternBMoveToFoundation);
+          drive.followTrajectorySync(three);
+
 
           manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.6);
           manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.9);
+          sleep(500);
 
           Trajectory patternMoveFoundation = drive.trajectoryBuilder()
                   .forward(45)
                   .build();
           drive.followTrajectorySync(patternMoveFoundation);
-          drive.turnSync(Math.toRadians(90));
-
-          manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
-          sleep(600);
-          manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-          sleep(400);
-          manager.getHardware().getServos().get("RotationServo").setPosition(0.95);
-          sleep(400);
-
-          manager.getHardware().getMotors().get("stoneElevator").setPower(-0.6);
-          sleep(600);
-          manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
-
-          manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
-          sleep(600);
-          manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-          sleep(400);
-          manager.getHardware().getServos().get("RotationServo").setPosition(0.28);
-          sleep(600);
-
-          manager.getHardware().getMotors().get("stoneElevator").setPower(-0.6);
-          sleep(600);
-          manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-          manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
-          manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
-
-          drive.setPoseEstimate(new Pose2d(50.0,-63.0,Math.toRadians(-180.0)));
-
-          Trajectory secondStone = drive.trajectoryBuilder()
-                  .strafeRight(25.0)
-                  .forward(95.0)
-                  .strafeRight(15.0)
-                  .forward(7.0)
-                  .strafeLeft(13.0)
-                  .lineTo(new Vector2d(55.0,-38.0),new LinearInterpolator(Math.toRadians(180.0), Math.toRadians(0.0)))
-                  .build();
-
-          drive.followTrajectorySync(secondStone);
+          drive.turnSync(Math.toRadians(turn));
+//
+//          manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
+//          sleep(600);
+//          manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
+//          sleep(400);
+//          manager.getHardware().getServos().get("RotationServo").setPosition(0.95);
+//          sleep(400);
+//
+//          manager.getHardware().getMotors().get("stoneElevator").setPower(-0.6);
+//          sleep(600);
+//          manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
+//
+//          manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
+//          sleep(600);
+//          manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
+//          sleep(400);
+//          manager.getHardware().getServos().get("RotationServo").setPosition(0.28);
+//          sleep(600);
+//
+//          manager.getHardware().getMotors().get("stoneElevator").setPower(-0.6);
+//          sleep(600);
+//          manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
+//          manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
+//          manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
+//
+//          drive.setPoseEstimate(new Pose2d(50.0,-63.0,Math.toRadians(-180.0)));
+//
+//          Trajectory secondStone = drive.trajectoryBuilder()
+//                  .strafeRight(25.0)
+//                  .forward(95.0)
+//                  .strafeRight(15.0)
+//                  .forward(7.0)
+//                  .strafeLeft(13.0)
+//                  .lineTo(new Vector2d(55.0,-38.0),new LinearInterpolator(Math.toRadians(180.0), Math.toRadians(0.0)))
+//                  .build();
+//
+//          drive.followTrajectorySync(secondStone);
 
 
       } else if (pattern == AutoCVUtil.Pattern.PATTERN_C ) {
