@@ -27,10 +27,10 @@ public class StoneElevator extends Module {
     private boolean needToEstimatePos = false;
 
     private int level = 0;
-    private final int TICK_PER_STONE = 1440;
+    private final int TICK_PER_STONE = 120;
 
 
-    private PIDController elevatorController = new PIDController(0.15, 0, 0);
+    private PIDController elevatorController = new PIDController(0.0004, 0, 0);
 
     public StoneElevator() {
         super(700, "StoneElevator");
@@ -45,12 +45,17 @@ public class StoneElevator extends Module {
     }
 
     public void loop() {
+        Teleop.getInstance().telemetry.addData("start tick",startPos);
+        Teleop.getInstance().telemetry.addData("Current tick",
+                Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition());
+        Teleop.getInstance().telemetry.addData("power",gamepadService.getAnalog(2, "right_stick_y"));
+        Teleop.getInstance().getHardware().getMotors().get("stoneElevator").setPower(gamepadService.getAnalog(2, "right_stick_y"));
         currentButtonPositionDpadUp = gamepadService.getDigital(2, "dpad_up");
         currentButtonPositionDpadDown = gamepadService.getDigital(2, "dpad_down");
         currentButtonPositionRightBumper = gamepadService.getDigital(2, "right_bumper");
 
         manualPower = gamepadService.getAnalog(2, "right_stick_y");
-        
+
         if (needToEstimatePos) {
             double currentPos = Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() - startPos;
             double estimatedPos = (currentPos - TICK_PER_STONE) / TICK_PER_STONE;
