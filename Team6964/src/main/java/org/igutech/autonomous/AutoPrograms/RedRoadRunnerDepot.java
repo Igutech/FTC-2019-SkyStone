@@ -19,16 +19,7 @@ import kotlin.Unit;
 @Config
 @Autonomous(name = "RedRoadRunnerDepot", group = "igutech")
 public class RedRoadRunnerDepot extends LinearOpMode {
-   public static int strafeLeft2 = 20;
-  // public static int x = -80;
-   //public static int y = -75;
-   //public static int back=13;
-   public static int back2=30;
-   //public static int pattern = 2;
 
-
-   //public static double eleTime=8.7;
-   //public static int angle= 135;
    FtcDashboard dashboard = FtcDashboard.getInstance();
    Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
@@ -38,6 +29,7 @@ public class RedRoadRunnerDepot extends LinearOpMode {
       AutoUtilManager manager = new AutoUtilManager(hardwareMap, "TestRoadrunner");
       manager.getDriveUtil().resetEncoders();
       IguMecanumDriveBase drive = new IguMecanumDriveBase(manager);
+      drive.setPoseEstimate(new Pose2d(50.0,-63.0,Math.toRadians(-180.0)));
 
       manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
       manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
@@ -68,362 +60,85 @@ public class RedRoadRunnerDepot extends LinearOpMode {
        new Thread(() -> {
            manager.getCvUtil().shutdown();
        }).start();
-      if (pattern == AutoCVUtil.Pattern.PATTERN_C) {
-
-         Trajectory Pattern_A_Trajectory = drive.trajectoryBuilder()
-                 .addMarker(() -> {
-                    manager.getHardware().getMotors().get("left_intake").setPower(0.75);
-                    manager.getHardware().getMotors().get("right_intake").setPower(-0.75);
-                    return Unit.INSTANCE;
-                 })
-                 .strafeRight(5)
-                 .back(30)
-                 //-16,-50 -65 degree
-                 //best option (-12,-55) -75 angle
-                 .lineTo(new Vector2d(-12,-50),new LinearInterpolator(Math.toRadians(0.0),Math.toRadians(-75)))
-                 .back(back2)
-                 .addMarker(5.0,() -> {
-                    manager.getHardware().getMotors().get("left_intake").setPower(0.0);
-                    manager.getHardware().getMotors().get("right_intake").setPower(0.0);
-                    return Unit.INSTANCE;
-                 })
-
-
-                 .addMarker(5.0, () -> {
-                    manager.getHardware().getServos().get("TransferServo").setPosition(0.75);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(6.0, () -> {
-                    manager.getHardware().getServos().get("GrabberServo").setPosition(0.28);
-                    return Unit.INSTANCE;
-                 })
-
-
-                 .addMarker(7.0, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(-0.20);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(9.0, () -> {
-                    manager.getHardware().getServos().get("RotationServo").setPosition(0.95);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(10.5 , () -> {
-                    manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
-                    return Unit.INSTANCE;
-                 })
-
-                 .addMarker(11.0, () -> {
-                    manager.getHardware().getServos().get("RotationServo").setPosition(0.28);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(11.0, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.25);
-                    return Unit.INSTANCE;
-                 })
-
-                 .lineTo(new Vector2d(-100, -70),new LinearInterpolator(Math.toRadians(0.0), Math.toRadians(135)))
-                 //latch onto foundation
-                 .addMarker(11.5, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.25);
-                    return Unit.INSTANCE;
-                 })
-
-
-                 .addMarker(12.5, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-                    return Unit.INSTANCE;
-                 })
-                 .back(10)
-
-                 .addMarker(9.0,() -> {
-                    manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.6);
-                    manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.9);
-                    return Unit.INSTANCE;
-                 })
-
-
-                // .back(5)
-
-                 .forward(65)
-
-
-                 .build();
-
-         drive.followTrajectorySync(Pattern_A_Trajectory);
-
-         drive.turnSync(Math.toRadians(-100));
-         Trajectory Pattern_C_Trajectory_Part2 = drive.trajectoryBuilder()
-
-                 .strafeLeft(45)
-                 .addMarker(() -> {
-                    manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
-                    manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(11.0, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.25);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(12.0, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-                    return Unit.INSTANCE;
-                 })
-                 .strafeLeft(15)
-                 .strafeRight(55)
-                 .forward(40)
-                 .build();
-
-         drive.followTrajectorySync(Pattern_C_Trajectory_Part2);
-
+      if (pattern == AutoCVUtil.Pattern.PATTERN_A) {
 
 
       } else if (pattern == AutoCVUtil.Pattern.PATTERN_B) {
-         Trajectory Pattern_B_Trajectory = drive.trajectoryBuilder()
+          Trajectory patternBMoveToFoundation=drive.trajectoryBuilder()
+                  .back(13.0)
+                  .addMarker(() -> {
+                      manager.getHardware().getMotors().get("left_intake").setPower(0.75);
+                      manager.getHardware().getMotors().get("right_intake").setPower(-0.75);
+                      return Unit.INSTANCE;
+                  })
+                  .strafeRight(42.0)
+                  .forward(7.0)
+                  .strafeLeft(17.0)
+                  .addMarker(() -> {
+                      manager.getHardware().getMotors().get("left_intake").setPower(0);
+                      manager.getHardware().getMotors().get("right_intake").setPower(0);
+                      return Unit.INSTANCE;
+                  })
+                  //now backing up toward the foundation x is how far back and y is how close to the foundation
+                  .lineTo(new Vector2d(40.0,-38.0),new LinearInterpolator(Math.toRadians(180.0), Math.toRadians(0.0)))
+                  //turn so the foundation grabbers can latch
+                  .lineTo(new Vector2d(50.0,-38.0),new LinearInterpolator(Math.toRadians(180.0),Math.toRadians(90.0)))
+                  //back up a bit more for safety
+                  .lineTo(new Vector2d(50.0,-30.0),new LinearInterpolator(Math.toRadians(-90.0),Math.toRadians(0.0)))
+                  .build();
+          drive.followTrajectorySync(patternBMoveToFoundation);
 
-                 .addMarker(() -> {
-                    manager.getHardware().getMotors().get("left_intake").setPower(0.75);
-                    manager.getHardware().getMotors().get("right_intake").setPower(-0.75);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(5.0, () -> {
-                    manager.getHardware().getMotors().get("left_intake").setPower(0.0);
-                    manager.getHardware().getMotors().get("right_intake").setPower(0.0);
-                    return Unit.INSTANCE;
-                 })
-                 .back(13)
-                 .strafeRight(53)
-                 .forward(10)
-                 .strafeLeft(20)
-                 .addMarker(5.0, () -> {
-                    manager.getHardware().getMotors().get("left_intake").setPower(0.0);
-                    manager.getHardware().getMotors().get("right_intake").setPower(0.0);
-                    return Unit.INSTANCE;
-                 })
+          manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.6);
+          manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.9);
 
+          Trajectory patternMoveFoundation = drive.trajectoryBuilder()
+                  .forward(45)
+                  .build();
+          drive.followTrajectorySync(patternMoveFoundation);
+          drive.turnSync(Math.toRadians(90));
 
-                 .addMarker(5.0, () -> {
-                    manager.getHardware().getServos().get("TransferServo").setPosition(0.75);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(6.0, () -> {
-                    manager.getHardware().getServos().get("GrabberServo").setPosition(0.28);
-                    return Unit.INSTANCE;
-                 })
+          manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
+          sleep(600);
+          manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
+          sleep(400);
+          manager.getHardware().getServos().get("RotationServo").setPosition(0.95);
+          sleep(400);
 
+          manager.getHardware().getMotors().get("stoneElevator").setPower(-0.6);
+          sleep(600);
+          manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
 
-                 //TODO check if this strafe is correct, could be 40
-                 .strafeLeft(20)
-                 .addMarker(6.5, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(-0.15);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(11.0, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.25);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(10.0, () -> {
-                    manager.getHardware().getServos().get("RotationServo").setPosition(0.95);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(11.0 , () -> {
-                    manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
-                    return Unit.INSTANCE;
-                 })
+          manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
+          sleep(600);
+          manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
+          sleep(400);
+          manager.getHardware().getServos().get("RotationServo").setPosition(0.28);
+          sleep(600);
 
-                 .addMarker(11.5, () -> {
-                    manager.getHardware().getServos().get("RotationServo").setPosition(0.28);
-                    return Unit.INSTANCE;
-                 })
+          manager.getHardware().getMotors().get("stoneElevator").setPower(-0.6);
+          sleep(600);
+          manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
+          manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
+          manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
 
+          drive.setPoseEstimate(new Pose2d(50.0,-63.0,Math.toRadians(-180.0)));
 
+          Trajectory secondStone = drive.trajectoryBuilder()
+                  .strafeRight(25.0)
+                  .forward(95.0)
+                  .strafeRight(15.0)
+                  .forward(7.0)
+                  .strafeLeft(13.0)
+                  .lineTo(new Vector2d(55.0,-38.0),new LinearInterpolator(Math.toRadians(180.0), Math.toRadians(0.0)))
+                  .build();
 
-                 .addMarker(11.5, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-                    return Unit.INSTANCE;
-                 })
-                 .lineTo(new Vector2d(-80,-30), new LinearInterpolator(Math.toRadians(0.0), Math.toRadians(105)))
-
-                 //finish dropping the skystone
-
-                 //latch onto foundation
-                 .addMarker(11.5, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.25);
-                    return Unit.INSTANCE;
-                 })
+          drive.followTrajectorySync(secondStone);
 
 
-                 .addMarker(12.5, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-                    return Unit.INSTANCE;
-                 })
-                 .back(10)
+      } else if (pattern == AutoCVUtil.Pattern.PATTERN_C ) {
 
-                 .addMarker(8.7,() -> {
-                     manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.6);
-                     manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.9);
-                     return Unit.INSTANCE;
-                 })
-
-
-                 //.back(8)
-
-                 .forward(65)
-
-
-
-                 .build();
-
-         drive.followTrajectorySync(Pattern_B_Trajectory);
-         drive.turnSync(Math.toRadians(-100));
-         Trajectory Pattern_B_Trajectory_Part2 = drive.trajectoryBuilder()
-
-                 .strafeLeft(25)
-                 .addMarker(() -> {
-                    manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
-                    manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(11.0, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.25);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(11.5, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-                    return Unit.INSTANCE;
-                 })
-
-
-                 .strafeLeft(10)
-                 .strafeRight(50)
-                 .forward(35)
-                 .build();
-
-         drive.followTrajectorySync(Pattern_B_Trajectory_Part2);
-
-      } else if (pattern == AutoCVUtil.Pattern.PATTERN_A ) {
-
-         Trajectory Pattern_C_Trajectory = drive.trajectoryBuilder()
-
-                 .addMarker(() -> {
-                    manager.getHardware().getMotors().get("left_intake").setPower(0.5);
-                    manager.getHardware().getMotors().get("right_intake").setPower(-0.5);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(4.0, () -> {
-                    manager.getHardware().getMotors().get("left_intake").setPower(0.0);
-                    manager.getHardware().getMotors().get("right_intake").setPower(0.0);
-                    return Unit.INSTANCE;
-                 })
-                 .back(3)
-                 .strafeRight(50)
-                 .forward(10)
-                 .strafeLeft(20)
-                 .addMarker(4.0, () -> {
-                    manager.getHardware().getMotors().get("left_intake").setPower(0.0);
-                    manager.getHardware().getMotors().get("right_intake").setPower(0.0);
-                    return Unit.INSTANCE;
-                 })
-
-
-                 .addMarker(5.0, () -> {
-                    manager.getHardware().getServos().get("TransferServo").setPosition(0.75);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(6.0, () -> {
-                    manager.getHardware().getServos().get("GrabberServo").setPosition(0.28);
-                    return Unit.INSTANCE;
-                 })
-
-
-                 //TODO check if this strafe is correct, could be 40
-                 .strafeLeft(25)
-                 .addMarker(6.5, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(-0.15);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(11.0, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.25);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(10.0, () -> {
-                    manager.getHardware().getServos().get("RotationServo").setPosition(0.95);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(11.0 , () -> {
-                    manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
-                    return Unit.INSTANCE;
-                 })
-
-                 .addMarker(11.5, () -> {
-                    manager.getHardware().getServos().get("RotationServo").setPosition(0.28);
-                    return Unit.INSTANCE;
-                 })
-
-
-
-                 .addMarker(11.5, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-                    return Unit.INSTANCE;
-                 })
-                 .lineTo(new Vector2d(-85,-30), new LinearInterpolator(Math.toRadians(0.0), Math.toRadians(105)))
-                 .back(10)
-
-                 //finish dropping the skystone
-
-                 //latch onto foundation
-                 .addMarker(11.5, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.25);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(9.0,() -> {
-                    manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.6);
-                    manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.9);
-                    return Unit.INSTANCE;
-                 })
-
-                 .addMarker(12.5, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-                    return Unit.INSTANCE;
-                 })
-
-
-                // .back(8)
-
-                 .forward(65)
-
-
-
-                 .build();
-
-         drive.followTrajectorySync(Pattern_C_Trajectory);
-         drive.turnSync(Math.toRadians(-100));
-         Trajectory Pattern_C_Trajectory_Part2 = drive.trajectoryBuilder()
-
-                 .strafeLeft(25)
-                 .addMarker(() -> {
-                    manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
-                    manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(11.0, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.25);
-                    return Unit.INSTANCE;
-                 })
-                 .addMarker(12.0, () -> {
-                    manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-                    return Unit.INSTANCE;
-                 })
-
-
-                 .strafeLeft(15)
-                 .strafeRight(52)
-                 .forward(35)
-                 .build();
-
-         drive.followTrajectorySync(Pattern_C_Trajectory_Part2);
 
       } else {
-
 
       }
 
