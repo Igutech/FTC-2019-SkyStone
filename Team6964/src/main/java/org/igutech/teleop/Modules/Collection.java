@@ -20,8 +20,8 @@ public class Collection extends Module {
 
         if(leftbumper)
         {
-            Teleop.getInstance().getHardware().getMotors().get("left_intake").setPower(-0.25);
-            Teleop.getInstance().getHardware().getMotors().get("right_intake").setPower(0.25);
+            Teleop.getInstance().getHardware().getMotors().get("left_intake").setPower(-0.5);
+            Teleop.getInstance().getHardware().getMotors().get("right_intake").setPower(0.5);
 
         }
         else
