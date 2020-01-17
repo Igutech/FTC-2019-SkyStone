@@ -97,6 +97,11 @@ public class RedRoadRunnerDepot extends LinearOpMode {
                   })
                   .forward(forward)
                   .strafeLeft(strafe)
+                  .addMarker(() -> {
+                      manager.getHardware().getMotors().get("left_intake").setPower(0);
+                      manager.getHardware().getMotors().get("right_intake").setPower(0);
+                      return Unit.INSTANCE;
+                  })
 
           .build();
           drive.followTrajectorySync(two);
@@ -109,7 +114,7 @@ public class RedRoadRunnerDepot extends LinearOpMode {
                       return Unit.INSTANCE;
                   })
                   .lineTo(new Vector2d(x,y),new LinearInterpolator(Math.toRadians(180.0), Math.toRadians(0.0)))
-                  .addMarker(3.5,() -> {
+                  .addMarker(() -> {
                       manager.getHardware().getServos().get("GrabberServo").setPosition(0.3);
                       return Unit.INSTANCE;
                   })
@@ -129,19 +134,52 @@ public class RedRoadRunnerDepot extends LinearOpMode {
                   .forward(45)
                   .build();
           drive.followTrajectorySync(patternMoveFoundation);
-          drive.turnSync(Math.toRadians(turn));
-//
-//          manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
-//          sleep(600);
-//          manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-//          sleep(400);
-//          manager.getHardware().getServos().get("RotationServo").setPosition(0.95);
-//          sleep(400);
-//
-//          manager.getHardware().getMotors().get("stoneElevator").setPower(-0.6);
-//          sleep(600);
-//          manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
-//
+          drive.turnSync(Math.toRadians(-90));
+
+          manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
+          sleep(600);
+          manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
+          sleep(400);
+          manager.getHardware().getServos().get("RotationServo").setPosition(0.95);
+          sleep(400);
+
+          manager.getHardware().getMotors().get("stoneElevator").setPower(-0.6);
+          sleep(600);
+          manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
+          manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
+          manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
+          sleep(200);
+
+          Trajectory patternBReleaseStone = drive.trajectoryBuilder()
+                  .forward(1)
+                  .addMarker(() -> {
+                      manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
+                      return Unit.INSTANCE;
+                  })
+                  .addMarker(1.2,() -> {
+                      manager.getHardware().getServos().get("RotationServo").setPosition(0.28);
+                      return Unit.INSTANCE;
+                  })
+                  .addMarker(1.6,() -> {
+                      manager.getHardware().getMotors().get("stoneElevator").setPower(0.-6);
+                      return Unit.INSTANCE;
+                  })
+                  .addMarker(2.4,() -> {
+                      manager.getHardware().getMotors().get("stoneElevator").setPower(0);
+                      return Unit.INSTANCE;
+                  })
+                  .back(15)
+                  .strafeRight(20)
+                  .forward(50)
+
+                  .build();
+          drive.followTrajectorySync(patternBReleaseStone);
+
+
+//          Trajectory patternBReleaseStone = drive.trajectoryBuilder()
+//                  .forward(1)
+//                  .build();
+//          drive.followTrajectorySync(patternBReleaseStone);
 //          manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
 //          sleep(600);
 //          manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
@@ -152,8 +190,17 @@ public class RedRoadRunnerDepot extends LinearOpMode {
 //          manager.getHardware().getMotors().get("stoneElevator").setPower(-0.6);
 //          sleep(600);
 //          manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
-//          manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
-//          manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
+//
+//
+//          Trajectory patternBPark = drive.trajectoryBuilder()
+//                  .back(15)
+//                  .strafeRight(20)
+//                  .forward(50)
+//                  .build();
+//          drive.followTrajectorySync(patternBPark);
+
+
+
 //
 //          drive.setPoseEstimate(new Pose2d(50.0,-63.0,Math.toRadians(-180.0)));
 //
@@ -171,6 +218,100 @@ public class RedRoadRunnerDepot extends LinearOpMode {
 
       } else if (pattern == AutoCVUtil.Pattern.PATTERN_C ) {
 
+          Trajectory patternBMoveToFoundation=drive.trajectoryBuilder()
+                  .back(4)
+
+                  .strafeRight(strafe2)
+
+                  .build();
+          drive.followTrajectorySync(patternBMoveToFoundation);
+
+          Trajectory patternCIntake = new TrajectoryBuilder(drive.getPoseEstimate(), slowConstraints)
+                  .addMarker(() -> {
+                      manager.getHardware().getMotors().get("left_intake").setPower(0.75);
+                      manager.getHardware().getMotors().get("right_intake").setPower(-0.75);
+                      return Unit.INSTANCE;
+                  })
+                  .forward(7.5)
+                  .strafeLeft(30)
+                  .back(3)
+                  .addMarker(() -> {
+                      manager.getHardware().getMotors().get("left_intake").setPower(0.0);
+                      manager.getHardware().getMotors().get("right_intake").setPower(0.0);
+                      return Unit.INSTANCE;
+                  })
+                  .build();
+          drive.followTrajectorySync(patternCIntake);
+
+
+          Trajectory three=drive.trajectoryBuilder()
+                  .setReversed(false)
+                  //now backing up toward the foundation x is how far back and y is how close to the foundation
+                  .addMarker(() -> {
+                      manager.getHardware().getServos().get("TransferServo").setPosition(0.75);
+                      return Unit.INSTANCE;
+                  })
+                  .lineTo(new Vector2d(x,y),new LinearInterpolator(Math.toRadians(180.0), Math.toRadians(0.0)))
+                  .addMarker(() -> {
+                      manager.getHardware().getServos().get("GrabberServo").setPosition(0.3);
+                      return Unit.INSTANCE;
+                  })
+//                  //turn so the foundation grabbers can latch
+                  .lineTo(new Vector2d(125,-38.0),new LinearInterpolator(Math.toRadians(180.0),Math.toRadians(90.0)))
+//                  //back up a bit more for safety
+                  .lineTo(new Vector2d(125,-33.0),new LinearInterpolator(Math.toRadians(-90.0),Math.toRadians(0.0)))
+                  .build();
+          drive.followTrajectorySync(three);
+
+
+          manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.6);
+          manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.9);
+          sleep(500);
+
+          Trajectory patternMoveFoundation = drive.trajectoryBuilder()
+                  .forward(50)
+                  .build();
+          drive.followTrajectorySync(patternMoveFoundation);
+          drive.turnSync(Math.toRadians(-90));
+
+          manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
+          sleep(600);
+          manager.getHardware().getMotors().get("stoneElevator").setPower(0.0);
+          sleep(400);
+          manager.getHardware().getServos().get("RotationServo").setPosition(0.95);
+          sleep(400);
+
+          manager.getHardware().getMotors().get("stoneElevator").setPower(-0.6);
+          sleep(600);
+          manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
+          manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
+          manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
+          sleep(200);
+
+          Trajectory patternBReleaseStone = drive.trajectoryBuilder()
+                  .forward(1)
+                  .addMarker(() -> {
+                      manager.getHardware().getMotors().get("stoneElevator").setPower(0.6);
+                      return Unit.INSTANCE;
+                  })
+                  .addMarker(1.2,() -> {
+                      manager.getHardware().getServos().get("RotationServo").setPosition(0.28);
+                      return Unit.INSTANCE;
+                  })
+                  .addMarker(1.6,() -> {
+                      manager.getHardware().getMotors().get("stoneElevator").setPower(0.-6);
+                      return Unit.INSTANCE;
+                  })
+                  .addMarker(2.4,() -> {
+                      manager.getHardware().getMotors().get("stoneElevator").setPower(0);
+                      return Unit.INSTANCE;
+                  })
+                  .back(15)
+                  .strafeRight(20)
+                  .forward(50)
+
+                  .build();
+          drive.followTrajectorySync(patternBReleaseStone);
 
       } else {
 
