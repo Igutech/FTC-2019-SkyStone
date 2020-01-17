@@ -12,8 +12,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @TeleOp
 public class ServoTuner extends LinearOpMode {
 
-    public static double Pos=0.3;
-    public static String name="FoundationServo_left";
+    public static double Pos=0.4;
+    //netrual 0.58
+    //0.8
+    public static String name="CapServo";
     @Override
     public void runOpMode()
     {
