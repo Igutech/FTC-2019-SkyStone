@@ -29,7 +29,7 @@ public class Transfer extends Module {
         if (currentButtonPositionX && !previousButtonPositionX) {
             toggleX = !toggleX;
             if (toggleX) {
-                Teleop.getInstance().getHardware().getServos().get("TransferServo").setPosition(0.75);
+                Teleop.getInstance().getHardware().getServos().get("TransferServo").setPosition(0.76);
             }
             if (!toggleX) {
                 Teleop.getInstance().getHardware().getServos().get("TransferServo").setPosition(0.43);
