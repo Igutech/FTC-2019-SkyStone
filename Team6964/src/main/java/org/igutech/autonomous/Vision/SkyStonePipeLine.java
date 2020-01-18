@@ -1,6 +1,7 @@
 package org.igutech.autonomous.Vision;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
@@ -10,7 +11,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-
+@Config
 public class SkyStonePipeLine extends OpenCvPipeline {
     private Mat matYCrCb = new Mat();
     private Mat matCb_left = new Mat();
@@ -25,13 +26,13 @@ public class SkyStonePipeLine extends OpenCvPipeline {
 
 
     public static int right_one = 160;
-    public static int right_two = 190;
-    public static int right_three = 210;
+    public static int right_two = 200;
+    public static int right_three = 190;
     public static int right_four = 210;
 
-    public static int left_one = 90;
-    public static int left_two = 190;
-    public static int left_three = 130;
+    public static int left_one = 80;
+    public static int left_two = 200;
+    public static int left_three = 110;
     public static int left_four = 210;
 
     FtcDashboard dashboard = FtcDashboard.getInstance();
