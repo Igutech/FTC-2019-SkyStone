@@ -1,12 +1,14 @@
 package org.igutech.teleop.Modules;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.apache.commons.math3.util.FastMath;
 import org.igutech.teleop.Module;
 import org.igutech.teleop.Teleop;
 import org.igutech.utils.control.PIDController;
 
 import org.igutech.utils.FTCMath;
-
+@Config
 public class StoneElevator extends Module {
 
     private GamepadService gamepadService;
@@ -29,8 +31,12 @@ public class StoneElevator extends Module {
     private int level = 0;
     private final int TICK_PER_STONE = 120;
 
+    public static double p = 0.02;
+    public static double i = 0.00;
+    public static double d = 0.00;
 
-    private PIDController elevatorController = new PIDController(0.0004, 0, 0);
+
+    private PIDController elevatorController = new PIDController(0.02, 0.0, 0.0);
 
     public StoneElevator() {
         super(700, "StoneElevator");
@@ -45,16 +51,16 @@ public class StoneElevator extends Module {
     }
 
     public void loop() {
-//        Teleop.getInstance().telemetry.addData("start tick",startPos);
-//        Teleop.getInstance().telemetry.addData("Current tick",
-//                Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition());
-//        Teleop.getInstance().telemetry.addData("power",gamepadService.getAnalog(2, "right_stick_y"));
-//        Teleop.getInstance().getHardware().getMotors().get("stoneElevator").setPower(gamepadService.getAnalog(2, "right_stick_y"));
+        Teleop.getInstance().telemetry.addData("start tick",startPos);
+        Teleop.getInstance().telemetry.addData("Current tick",
+                Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition());
+        Teleop.getInstance().telemetry.addData("power",gamepadService.getAnalog(2, "right_stick_y"));
+        Teleop.getInstance().getHardware().getMotors().get("stoneElevator").setPower(gamepadService.getAnalog(2, "right_stick_y"));
         currentButtonPositionDpadUp = gamepadService.getDigital(2, "dpad_up");
         currentButtonPositionDpadDown = gamepadService.getDigital(2, "dpad_down");
         currentButtonPositionRightBumper = gamepadService.getDigital(2, "right_bumper");
 
-        manualPower = gamepadService.getAnalog(2, "right_stick_y");
+        manualPower =  -1* gamepadService.getAnalog(2, "right_stick_y");
 
         if (needToEstimatePos) {
             double currentPos = Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() - startPos;
