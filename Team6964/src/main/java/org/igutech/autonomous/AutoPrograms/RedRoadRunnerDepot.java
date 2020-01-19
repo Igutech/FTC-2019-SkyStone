@@ -22,7 +22,7 @@ import kotlin.Unit;
 import static org.igutech.autonomous.roadrunner.MecanumDriveBase.BASE_CONSTRAINTS;
 
 @Config
-@Autonomous(name = "RoadRunnerTestOp", group = "igutech")
+@Autonomous(name = "RedRoadRunnerDepot", group = "igutech")
 public class RedRoadRunnerDepot extends LinearOpMode {
     public static int foward = 3;
     public static int strafe = 14;
