@@ -2,6 +2,7 @@ package org.igutech.autonomous;
 
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.igutech.autonomous.roadrunner.Elevator;
@@ -10,6 +11,7 @@ import org.igutech.autonomous.roadrunner.Elevator;
  * Simple test of motion-profiled elevator autonomous operation. The elevator should move *smoothly*
  * between random heights.
  */
+@Disabled
 @Autonomous(group = "elevator")
 public class ElevatorTest extends LinearOpMode {
     @Override

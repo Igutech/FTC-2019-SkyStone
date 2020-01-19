@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.igutech.autonomous.roadrunner.IguMecanumDriveBase;
 import org.igutech.autonomous.util.AutoUtilManager;
 @Config
+@Disabled
 @Autonomous(group = "drive")
 public class TurnTest extends LinearOpMode {
     public static double ANGLE = 180; // deg
