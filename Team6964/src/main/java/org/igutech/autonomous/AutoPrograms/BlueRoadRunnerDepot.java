@@ -33,6 +33,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
     public static int x = 45;
     public static int y = 36;
     public static int x2 = 10;
+    public static int back = 5;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -79,7 +80,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
          */
         if (pattern == AutoCVUtil.Pattern.PATTERN_A) {
             Trajectory patternA = drive.trajectoryBuilder()
-                    .back(16)
+                    .back(15)
                     .strafeRight(48)
                     .build();
             drive.followTrajectorySync(patternA);
@@ -170,7 +171,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
 
         if (pattern == AutoCVUtil.Pattern.PATTERN_B) {
             Trajectory patternB = drive.trajectoryBuilder()
-                    .back(9)
+                    .back(8)
                     .strafeRight(48)
                     .build();
             drive.followTrajectorySync(patternB);
@@ -181,7 +182,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                         manager.getHardware().getMotors().get("right_intake").setPower(-0.75);
                         return Unit.INSTANCE;
                     })
-                    .forward(12)
+                    .forward(14)
                     .strafeLeft(28)
 
                     .build();
@@ -263,7 +264,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
 
         if (pattern == AutoCVUtil.Pattern.PATTERN_C ) {
             Trajectory patternC = drive.trajectoryBuilder()
-                    .back(23)
+                    .back(20)
                     .strafeRight(48)
                     .build();
             drive.followTrajectorySync(patternC);
@@ -274,7 +275,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                         manager.getHardware().getMotors().get("right_intake").setPower(-0.75);
                         return Unit.INSTANCE;
                     })
-                    .forward(13)
+                    .forward(11)
                     .strafeLeft(28)
 
                     .build();
