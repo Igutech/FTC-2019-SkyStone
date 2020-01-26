@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.igutech.config.Hardware;
 import org.igutech.teleop.Modules.Capping;
 import org.igutech.teleop.Modules.Collection;
+import org.igutech.teleop.Modules.ConceptStoneElevator;
 import org.igutech.teleop.Modules.DisconnectWorkaround;
 import org.igutech.teleop.Modules.DriveTrain;
 import org.igutech.teleop.Modules.FoundationServo;
@@ -35,7 +36,7 @@ public class Teleop extends OpMode {
         modules.add(new DriveTrain());
         modules.add(new Collection());
         modules.add(new FoundationServo());
-        modules.add(new StoneElevator());
+        modules.add(new ConceptStoneElevator());
         modules.add(new Transfer());
         modules.add(new Capping());
         
