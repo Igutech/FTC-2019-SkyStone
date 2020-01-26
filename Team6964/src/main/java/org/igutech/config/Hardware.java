@@ -2,6 +2,7 @@ package org.igutech.config;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -47,6 +48,8 @@ public class Hardware {
         motors.get("left_intake").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motors.get("right_intake").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motors.get("stoneElevator").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+       // motors.get("stoneElevator").setDirection(DcMotorSimple.Direction.REVERSE);
+
 
 
         motors.get("frontright").setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
