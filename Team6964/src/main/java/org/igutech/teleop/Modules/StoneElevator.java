@@ -40,7 +40,6 @@ public class StoneElevator extends Module {
 
     private int level = 0;
     private final int TICK_PER_STONE = 250;
-    private int lastLevel = 0;
     private final int SAFE_ROTATION_TICK = 1000;
 
     public static double p = 0.02;
@@ -72,30 +71,7 @@ public class StoneElevator extends Module {
             case RISE:
                 level++;
                 autoMode = true;
-                elevatorState = ElevatorState.STACKING;
-                break;
-            case STACKING:
-                autoMode = true;
-                if (level <= SAFE_ROTATION_TICK) {
-                    lastLevel = level;
-                    level = 5;
-                    if (reset) {
-                        time = System.currentTimeMillis();
-                        reset = false;
-                    }
-                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() > SAFE_ROTATION_TICK) {
-                        Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.95);
-                        if ((System.currentTimeMillis() - time) > 2500) {
-                            level = lastLevel;
-                            reset = true;
-                        }
-                    }
-
-                } else {
-                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() > SAFE_ROTATION_TICK) {
-                        Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.95);
-                    }
-                }
+                elevatorState = ElevatorState.MOVING;
                 break;
             case DOWN:
                 level = 0;
@@ -167,7 +143,6 @@ public class StoneElevator extends Module {
 
     private enum ElevatorState {
         DEFAULT,
-        STACKING,
         RISE,
         MOVING,
         DOWN,
