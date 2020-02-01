@@ -40,6 +40,8 @@ public class StoneElevator extends Module {
 
     private int level = 0;
     private final int TICK_PER_STONE = 250;
+    private int lastLevel = 0;
+    private final int SAFE_ROTATION_TICK = 1000;
 
     public static double p = 0.02;
     public static double i = 0.00;
@@ -72,6 +74,29 @@ public class StoneElevator extends Module {
                 autoMode = true;
                 elevatorState = ElevatorState.STACKING;
                 break;
+            case STACKING:
+                autoMode = true;
+                if (level <= SAFE_ROTATION_TICK) {
+                    lastLevel = level;
+                    level = 5;
+                    if (reset) {
+                        time = System.currentTimeMillis();
+                        reset = false;
+                    }
+                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() > SAFE_ROTATION_TICK) {
+                        Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.95);
+                        if ((System.currentTimeMillis() - time) > 2500) {
+                            level = lastLevel;
+                            reset = true;
+                        }
+                    }
+
+                } else {
+                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() > SAFE_ROTATION_TICK) {
+                        Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.95);
+                    }
+                }
+                break;
             case DOWN:
                 level = 0;
                 autoMode = true;
@@ -84,63 +109,33 @@ public class StoneElevator extends Module {
                     time = System.currentTimeMillis();
                     reset = false;
                 }
-                if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() > 1000) {
+                if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() > SAFE_ROTATION_TICK) {
                     Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.28);
                     if ((System.currentTimeMillis() - time) > 2500) {
                         elevatorState = ElevatorState.DOWN;
                         reset = true;
                     }
                 }
-                // if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition())
                 break;
             case MOVING:
                 if (level == 0 && Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() < 10) {
                     elevatorState = ElevatorState.OFF;
                 }
-
             case OFF:
                 autoMode = false;
                 break;
 
         }
 
-//        if (elevatorState == ElevatorState.RISE) {
-//            level++;
-//            autoMode = true;
-//            elevatorState = ElevatorState.MOVING;
-//        } else if (elevatorState == ElevatorState.DOWN) {
-//            level = 0;
-//            autoMode = true;
-//            elevatorState = ElevatorState.MOVING;
-//        } else if (elevatorState == ElevatorState.MOVING) {
-//            if (level == 0 && Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() < 10) {
-//                elevatorState=ElevatorState.OFF;
-//            }
-//        } else if (elevatorState == ElevatorState.DEFAULT) {
-//            level = 5;
-//            autoMode = true;
-//            if (reset) {
-//                time = System.currentTimeMillis();
-//                reset = false;
-//            }
-//            if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() > 1000) {
-//                if ((System.currentTimeMillis() - time) > 2500) {
-//                    elevatorState = ElevatorState.DOWN;
-//                    reset = true;
-//                }
-//            }
-//        } else if(elevatorState==ElevatorState.OFF){
-//            autoMode=false;
-//        }
 
         if (currentButtonPositionDpadUp && !previousButtonPositionDpadUp) {
             elevatorState = ElevatorState.RISE;
 
         } else if (currentButtonPositionDpadDown && !previousButtonPositionDpadDown) {
-            elevatorState = ElevatorState.DOWN;
+            elevatorState = ElevatorState.DEFAULT;
 
         } else if (currentButtonPositionRightBumper && !previousButtonPositionRightBumper) {
-            elevatorState = ElevatorState.DEFAULT;
+            elevatorState = ElevatorState.DOWN;
         }
         previousButtonPositionDpadDown = currentButtonPositionDpadDown;
         previousButtonPositionDpadUp = currentButtonPositionDpadUp;
@@ -169,7 +164,6 @@ public class StoneElevator extends Module {
         }
 
     }
-
 
     private enum ElevatorState {
         DEFAULT,
