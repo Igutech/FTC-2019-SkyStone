@@ -37,10 +37,10 @@ public class Teleop extends OpMode {
         modules.add(new DriveTrain());
         modules.add(new Collection());
         modules.add(new FoundationServo());
-        modules.add(new ConceptStoneElevator());
+        modules.add(new StoneElevator());
         modules.add(new Transfer());
         modules.add(new Capping());
-        modules.add(new EncoderTest());
+        //modules.add(new EncoderTest());
         
     }
 

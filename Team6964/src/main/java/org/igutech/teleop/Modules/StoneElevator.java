@@ -15,10 +15,10 @@ public class StoneElevator extends Module {
 
     private GamepadService gamepadService;
     private ElapsedTime runtime = new ElapsedTime();
-    public boolean reset=true;
+    public boolean reset = true;
     public double time;
 
-    private ElevatorState elevatorState;
+    private ElevatorState elevatorState = ElevatorState.OFF;
     private double manualPower = 0.0;
     private double startPos;
 
@@ -35,6 +35,14 @@ public class StoneElevator extends Module {
     private boolean currentButtonPositionRightBumper = false;
     private boolean toggleDpadRightBumper = false;
 
+    private boolean previousButtonPositionLeftBumper = false;
+    private boolean currentButtonPositionLeftBumper = false;
+    private boolean toggleDpadLeftBumper = false;
+
+    private boolean previousButtonPositionBack = false;
+    private boolean currentButtonPositionBack = false;
+    private boolean toggleBack = false;
+
     private boolean autoMode = false;
     private boolean needToEstimatePos = false;
 
@@ -44,12 +52,13 @@ public class StoneElevator extends Module {
     public static double p = 0.02;
     public static double i = 0.00;
     public static double d = 0.0005;
-    private int lastLevel=0;
+    private int lastLevel = 0;
+    private boolean automaticMode = true;
 
     private PIDController elevatorController = new PIDController(p, i, d);
 
     public StoneElevator() {
-        super(710, "ConceptStoneElevator");
+        super(710, "StoneElevator");
     }
 
     public void init() {
@@ -62,73 +71,86 @@ public class StoneElevator extends Module {
     }
 
     public void loop() {
-        if (currentButtonPositionDpadUp && !previousButtonPositionDpadUp) {
-            elevatorState = ElevatorState.RISE;
-            lastLevel++;
-
-        } else if (currentButtonPositionDpadDown && !previousButtonPositionDpadDown) {
-            elevatorState = ElevatorState.DOWN;
-            level = 0;
-
-        } else if (currentButtonPositionRightBumper && !previousButtonPositionRightBumper) {
-            elevatorState = ElevatorState.DEFAULT;
-            level = 5;
-
-        }
-        previousButtonPositionDpadDown = currentButtonPositionDpadDown;
-        previousButtonPositionDpadUp = currentButtonPositionDpadUp;
-        previousButtonPositionRightBumper = currentButtonPositionRightBumper;
 
         manualPower = -1 * gamepadService.getAnalog(2, "right_stick_y");
         currentButtonPositionDpadUp = gamepadService.getDigital(2, "dpad_up");
         currentButtonPositionDpadDown = gamepadService.getDigital(2, "dpad_down");
         currentButtonPositionRightBumper = gamepadService.getDigital(2, "right_bumper");
+        currentButtonPositionLeftBumper = gamepadService.getDigital(2, "left_bumper");
+        currentButtonPositionBack = gamepadService.getDigital(2, "back");
 
-        switch(elevatorState){
-            case RISE:
-                level=lastLevel;
-                autoMode = true;
-                break;
-            case DOWN:
-                level = 0;
-                autoMode = true;
-                if(Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition()<-1000)
-                {
-                    autoMode=false;
-                }
-                break;
-            case DEFAULT:
-                level=5;
-                autoMode = true;
-                if(reset)
-                {
-                    time=System.currentTimeMillis();
-                    reset=false;
-                }
-                Teleop.getInstance().getHardware().getServos().get("TransferServo").setPosition(0.43);
+        if (currentButtonPositionDpadUp && !previousButtonPositionDpadUp) {
+            elevatorState = ElevatorState.RISE;
+            lastLevel++;
 
-                if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() > -100) {
-                    Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.28);
+        }
+        if (currentButtonPositionDpadDown && !previousButtonPositionDpadDown) {
+            elevatorState = ElevatorState.DOWN;
+            level = 0;
+        }
+        if (currentButtonPositionRightBumper && !previousButtonPositionRightBumper) {
+            elevatorState = ElevatorState.DEFAULT;
+            level = 5;
+        }
+        if (currentButtonPositionLeftBumper && !previousButtonPositionLeftBumper) {
+            lastLevel = 0;
+        }
+        if (currentButtonPositionBack && !previousButtonPositionBack) {
+            automaticMode = !automaticMode;
+        }
 
-                    if((System.currentTimeMillis()-time)>2000){
-                        elevatorState = ElevatorState.DOWN;
-                        reset=true;
+        previousButtonPositionDpadDown = currentButtonPositionDpadDown;
+        previousButtonPositionDpadUp = currentButtonPositionDpadUp;
+        previousButtonPositionRightBumper = currentButtonPositionRightBumper;
+        previousButtonPositionLeftBumper = currentButtonPositionLeftBumper;
+        previousButtonPositionBack = currentButtonPositionBack;
+
+        if (automaticMode) {
+            switch (elevatorState) {
+                case RISE:
+                    level = lastLevel;
+                    autoMode = true;
+                    break;
+                case DOWN:
+                    level = 0;
+                    autoMode = true;
+                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() < startPos + 10) {
+                        autoMode = false;
+                        elevatorState = ElevatorState.OFF;
                     }
-                }
-                break;
-            case OFF:
-                autoMode=false;
-                break;
+                    break;
+                case DEFAULT:
+                    level = 5;
+                    autoMode = true;
+                    if (reset) {
+                        time = System.currentTimeMillis();
+                        reset = false;
+                    }
+                    Teleop.getInstance().getHardware().getServos().get("TransferServo").setPosition(0.43);
+
+                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() > 360) {
+                        Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.28);
+
+                        if ((System.currentTimeMillis() - time) > 2000) {
+                            elevatorState = ElevatorState.DOWN;
+                            reset = true;
+                        }
+                    }
+                    break;
+                case OFF:
+                    autoMode = false;
+                    break;
+            }
         }
 
         if (Math.abs(manualPower) > 0.01) {
             autoMode = false;
-            elevatorState=ElevatorState.OFF;
+            elevatorState = ElevatorState.OFF;
         }
 
         if (autoMode) {
             level = (int) FTCMath.clamp(0, 8, level);
-            int setPoint =(int) startPos+ (level * TICK_PER_STONE);
+            int setPoint = (int) startPos + (level * TICK_PER_STONE);
             elevatorController.updateSetpoint(setPoint);
             if (Math.abs(setPoint - Teleop.getInstance().getHardware().getMotors()
                     .get("stoneElevator").getCurrentPosition()) > 50) {
