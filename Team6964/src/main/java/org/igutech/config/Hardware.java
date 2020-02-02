@@ -2,6 +2,7 @@ package org.igutech.config;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -56,6 +57,7 @@ public class Hardware {
         motors.get("left_intake").setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motors.get("right_intake").setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motors.get("stoneElevator").setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //motors.get("stoneElevator").setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 

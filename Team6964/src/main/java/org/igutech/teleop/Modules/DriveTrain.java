@@ -118,7 +118,8 @@ public class DriveTrain extends Module {
 //        Teleop.getInstance().telemetry.addData("FrontLeft ", powers.get(0));
 //        Teleop.getInstance().telemetry.addData("FrontRight",powers.get(1));
 //        Teleop.getInstance().telemetry.addData("BackLeft", -powers.get(2));
-//        Teleop.getInstance().telemetry.addData("BackRight", -powers.get(3));
+        Teleop.getInstance().telemetry.addData("BackRight",Teleop.getInstance().getHardware().getMotors().get("backright").getCurrentPosition());
+        Teleop.getInstance().telemetry.addData("tick", Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition());
 
         if (PID_STABILIZATION_ENABLED && PID_ADJUSTMENT_ENABLED) {
             PIDController controller = (PIDController) gyroController;

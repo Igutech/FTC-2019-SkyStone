@@ -9,6 +9,7 @@ import org.igutech.teleop.Modules.Collection;
 import org.igutech.teleop.Modules.ConceptStoneElevator;
 import org.igutech.teleop.Modules.DisconnectWorkaround;
 import org.igutech.teleop.Modules.DriveTrain;
+import org.igutech.teleop.Modules.EncoderTest;
 import org.igutech.teleop.Modules.FoundationServo;
 import org.igutech.teleop.Modules.GamepadService;
 import org.igutech.teleop.Modules.StoneElevator;
@@ -39,6 +40,7 @@ public class Teleop extends OpMode {
         modules.add(new ConceptStoneElevator());
         modules.add(new Transfer());
         modules.add(new Capping());
+        modules.add(new EncoderTest());
         
     }
 
