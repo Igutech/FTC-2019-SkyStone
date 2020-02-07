@@ -49,7 +49,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
 
         manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
         manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
-        manager.getHardware().getServos().get("TransferServo").setPosition(0.43);
+        //manager.getHardware().getServos().get("TransferServo").setPosition(0.43);
         manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
         manager.getHardware().getServos().get("CapServo").setPosition(0.54);
 

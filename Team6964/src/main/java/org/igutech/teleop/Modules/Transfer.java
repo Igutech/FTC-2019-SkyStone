@@ -6,9 +6,6 @@ import org.igutech.teleop.Teleop;
 public class Transfer extends Module {
 
     private GamepadService gamepadService;
-    private boolean toggleX = false;
-    private boolean previousButtonPositionX = false;
-    private boolean currentButtonPositionX = false;
     private boolean toggleA = false;
     private boolean toggleY = false;
     private boolean previousButtonPositionA = false;
@@ -23,19 +20,6 @@ public class Transfer extends Module {
     }
 
     public void loop() {
-
-        currentButtonPositionX = gamepadService.getDigital(2, "x");
-
-        if (currentButtonPositionX && !previousButtonPositionX) {
-            toggleX = !toggleX;
-            if (toggleX) {
-                Teleop.getInstance().getHardware().getServos().get("TransferServo").setPosition(0.76);
-            }
-            if (!toggleX) {
-                Teleop.getInstance().getHardware().getServos().get("TransferServo").setPosition(0.43);
-            }
-        }
-        previousButtonPositionX = currentButtonPositionX;
 
         boolean currentButtonPositionA = gamepadService.getDigital(2, "a");
 

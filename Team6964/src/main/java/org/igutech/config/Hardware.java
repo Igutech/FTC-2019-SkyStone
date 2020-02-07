@@ -39,6 +39,8 @@ public class Hardware {
         motors.put("left_intake", hardwareMap.dcMotor.get("left_intake"));
         motors.put("right_intake", hardwareMap.dcMotor.get("right_intake"));
         motors.put("stoneElevator",hardwareMap.dcMotor.get("stoneElevator"));
+        motors.put("transferMotor",hardwareMap.dcMotor.get("stoneElevator"));
+
 
 
         motors.get("frontright").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -48,7 +50,9 @@ public class Hardware {
         motors.get("left_intake").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motors.get("right_intake").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motors.get("stoneElevator").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-       // motors.get("stoneElevator").setDirection(DcMotorSimple.Direction.REVERSE);
+        motors.get("transferMotor").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // motors.get("stoneElevator").setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -66,7 +70,7 @@ public class Hardware {
         servos.put("FoundationServo_right", hardwareMap.servo.get("FoundationServo_right"));
         servos.put("GrabberServo", hardwareMap.servo.get("GrabberServo"));
         servos.put("RotationServo", hardwareMap.servo.get("RotationServo"));
-        servos.put("TransferServo", hardwareMap.servo.get("TransferServo"));
+        //servos.put("TransferServo", hardwareMap.servo.get("TransferServo"));
         servos.put("CapServo", hardwareMap.servo.get("CapServo"));
 
 
