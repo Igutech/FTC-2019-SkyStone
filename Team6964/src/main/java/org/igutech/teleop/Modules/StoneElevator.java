@@ -90,7 +90,7 @@ public class StoneElevator extends Module {
         }
         if (currentButtonPositionRightBumper && !previousButtonPositionRightBumper) {
             elevatorState = ElevatorState.DEFAULT;
-            level = 5;
+
         }
         if (currentButtonPositionLeftBumper && !previousButtonPositionLeftBumper) {
             lastLevel = 0;
@@ -120,7 +120,9 @@ public class StoneElevator extends Module {
                     }
                     break;
                 case DEFAULT:
-                    level = 5;
+                    if(Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition()<800){
+                        level = 5;
+                    }
                     autoMode = true;
                     if (reset) {
                         time = System.currentTimeMillis();
