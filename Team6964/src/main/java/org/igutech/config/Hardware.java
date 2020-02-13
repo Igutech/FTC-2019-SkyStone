@@ -39,7 +39,7 @@ public class Hardware {
         motors.put("left_intake", hardwareMap.dcMotor.get("left_intake"));
         motors.put("right_intake", hardwareMap.dcMotor.get("right_intake"));
         motors.put("stoneElevator",hardwareMap.dcMotor.get("stoneElevator"));
-        motors.put("transferMotor",hardwareMap.dcMotor.get("stoneElevator"));
+        motors.put("transferMotor",hardwareMap.dcMotor.get("transferMotor"));
 
 
 
@@ -52,7 +52,7 @@ public class Hardware {
         motors.get("stoneElevator").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motors.get("transferMotor").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // motors.get("stoneElevator").setDirection(DcMotorSimple.Direction.REVERSE);
+         motors.get("stoneElevator").setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 

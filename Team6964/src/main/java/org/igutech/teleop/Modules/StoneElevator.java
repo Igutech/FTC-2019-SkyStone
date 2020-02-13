@@ -78,7 +78,7 @@ public class StoneElevator extends Module {
         currentButtonPositionRightBumper = gamepadService.getDigital(2, "right_bumper");
         currentButtonPositionLeftBumper = gamepadService.getDigital(2, "left_bumper");
         currentButtonPositionBack = gamepadService.getDigital(2, "back");
-
+        Teleop.getInstance().telemetry.addData("encoder", Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition());
         if (currentButtonPositionDpadUp && !previousButtonPositionDpadUp) {
             elevatorState = ElevatorState.RISE;
             lastLevel++;
