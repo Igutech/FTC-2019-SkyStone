@@ -23,15 +23,21 @@ public class Collection extends Module {
         leftbumper = gamepadService.getDigital(1, "left_bumper");
 
         if (leftbumper) {
-            Teleop.getInstance().getHardware().getMotors().get("left_intake").setPower(-0.5);
-            Teleop.getInstance().getHardware().getMotors().get("right_intake").setPower(0.5);
+            Teleop.getInstance().getHardware().getMotors().get("left_intake").setPower(0.6);
+            Teleop.getInstance().getHardware().getMotors().get("right_intake").setPower(-0.6);
+            Teleop.getInstance().getHardware().getMotors().get("transferMotor").setPower(1.0);
+
         }
 
         if (leftTrigger > 0.01) {
             Teleop.getInstance().getHardware().getMotors().get("left_intake").setPower(-0.6);
             Teleop.getInstance().getHardware().getMotors().get("right_intake").setPower(0.6);
-            Teleop.getInstance().getHardware().getMotors().get("transferMotor").setPower(1.0);
-
+            Teleop.getInstance().getHardware().getMotors().get("transferMotor").setPower(-1.0);
+        }
+        if (leftTrigger < 0.01 && !leftbumper) {
+            Teleop.getInstance().getHardware().getMotors().get("left_intake").setPower(0.0);
+            Teleop.getInstance().getHardware().getMotors().get("right_intake").setPower(0.0);
+            Teleop.getInstance().getHardware().getMotors().get("transferMotor").setPower(0.0);
         }
     }
 
