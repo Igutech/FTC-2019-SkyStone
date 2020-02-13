@@ -67,7 +67,6 @@ public class RoadRunnerTestOp extends LinearOpMode {
 
         manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
         manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
-        manager.getHardware().getServos().get("TransferServo").setPosition(0.43);
         manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
         manager.getHardware().getServos().get("CapServo").setPosition(0.54);
 
@@ -133,6 +132,12 @@ public class RoadRunnerTestOp extends LinearOpMode {
                 Trajectory moveToFoundation = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
                         .addMarker(5.0, () -> {
                             changeElevatorState(ElevatorState.UP);
+                            return Unit.INSTANCE;
+                        })
+                        .addMarker(() -> {
+                            manager.getHardware().getMotors().get("left_intake").setPower(-0.6);
+                            manager.getHardware().getMotors().get("right_intake").setPower(0.6);
+                            manager.getHardware().getMotors().get("transferMotor").setPower(-1.0);
                             return Unit.INSTANCE;
                         })
                         //intake
