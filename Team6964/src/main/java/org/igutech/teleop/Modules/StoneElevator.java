@@ -74,7 +74,7 @@ public class StoneElevator extends Module {
 
     public void loop() {
 
-        manualPower = -1 * gamepadService.getAnalog(2, "right_stick_y");
+        manualPower =  gamepadService.getAnalog(2, "right_stick_y");
         currentButtonPositionDpadUp = gamepadService.getDigital(2, "dpad_up");
         currentButtonPositionDpadDown = gamepadService.getDigital(2, "dpad_down");
         currentButtonPositionRightBumper = gamepadService.getDigital(2, "right_bumper");
@@ -126,23 +126,27 @@ public class StoneElevator extends Module {
                     }
                     break;
                 case DEFAULT:
-                    if(Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition()>-400){
-                        level = 5;
+                    level=0;
+                    if(Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition()> startPos-10) {
+                        Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.2);
                     }
-                    autoMode = true;
-                    if (reset) {
-                        time = System.currentTimeMillis();
-                        reset = false;
-                    }
-
-                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() < -500) {
-                        Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.88);
-
-                        if ((System.currentTimeMillis() - time) > 2000) {
-                            elevatorState = ElevatorState.DOWN;
-                            reset = true;
-                        }
-                    }
+//                    if(Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition()>-400){
+//                        level = 5;
+//                    }
+//                    autoMode = true;
+//                    if (reset) {
+//                        time = System.currentTimeMillis();
+//                        reset = false;
+//                    }
+//
+//                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() < -500) {
+//                        Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.88);
+//
+//                        if ((System.currentTimeMillis() - time) > 2000) {
+//                            elevatorState = ElevatorState.DOWN;
+//                            reset = true;
+//                        }
+//                    }
                     break;
                 case OFF:
                     autoMode = false;

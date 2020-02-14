@@ -46,7 +46,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
     private int level = 0;
     private boolean elevatorEnabled = true;
 
-    public static AutoCVUtil.Pattern testPattern= AutoCVUtil.Pattern.PATTERN_C;
+    public static AutoCVUtil.Pattern testPattern = AutoCVUtil.Pattern.PATTERN_C;
 
     IguMecanumDriveBase drive;
     DriveConstraints slowConstraints = new DriveConstraints(
@@ -62,8 +62,8 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        dashboard = FtcDashboard.getInstance();
-        Telemetry dashboardTelemetry = dashboard.getTelemetry();
+//        dashboard = FtcDashboard.getInstance();
+//        Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
 
         manager = new AutoUtilManager(hardwareMap, "BlueRoadRunnerDepot");
@@ -92,7 +92,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
 
         if (isStopRequested()) return;
         //patternFinal = pattern;
-        patternFinal=testPattern;
+        patternFinal = testPattern;
         telemetry.addData("Final Pattern", patternFinal);
         telemetry.update();
 
@@ -116,16 +116,16 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                 manager.getHardware().getMotors().get("stoneElevator").setPower(power);
             }
             Pose2d currentPose = drive.getPoseEstimate();
-            dashboardTelemetry.addData("x", currentPose.getX());
-            dashboardTelemetry.addData("y", currentPose.getY());
-            dashboardTelemetry.addData("heading", currentPose.getHeading());
-            dashboardTelemetry.addData("x error", drive.getLastError().getX());
-            dashboardTelemetry.addData("y error", drive.getLastError().getY());
-            dashboardTelemetry.addData("heading error", drive.getLastError().getHeading());
+//            dashboardTelemetry.addData("x", currentPose.getX());
+//            dashboardTelemetry.addData("y", currentPose.getY());
+//            dashboardTelemetry.addData("heading", currentPose.getHeading());
+//            dashboardTelemetry.addData("x error", drive.getLastError().getX());
+//            dashboardTelemetry.addData("y error", drive.getLastError().getY());
+//            dashboardTelemetry.addData("heading error", drive.getLastError().getHeading());
             telemetry.addData("stage", state);
             telemetry.update();
             drive.update();
-            dashboardTelemetry.update();
+           // dashboardTelemetry.update();
 
         }
         changeTrajectoryState(TrajectoryState.OFF);
@@ -166,18 +166,21 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                     drive.followTrajectory(preIntake);
                 } else if (patternFinal == AutoCVUtil.Pattern.PATTERN_C) {
                     Trajectory preIntake = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
-                            .addMarker(() -> {
-                                manager.getHardware().getMotors().get("right_intake").setPower(-0.2);
-                                return Unit.INSTANCE;
-                            })
+//                            .addMarker(() -> {
+//                                manager.getHardware().getMotors().get("right_intake").setPower(-0.2);
+//                                return Unit.INSTANCE;
+//                            })
                             //intake
+                            .forward(10.0)
                             .lineTo(new Vector2d(-33.0, 35.0), new LinearInterpolator(Math.toRadians(-90.0), Math.toRadians(-30.0)))
                             .addMarker(() -> {
                                 changeTrajectoryState(TrajectoryState.INTAKE_FIRST_STONE);
                                 return Unit.INSTANCE;
                             })
                             .build();
+
                     drive.followTrajectory(preIntake);
+
                 }
                 break;
 
@@ -221,7 +224,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                                 return Unit.INSTANCE;
                             })
                             .lineTo(new Vector2d(-35.0, 20.0), new LinearInterpolator(Math.toRadians(-120.0), Math.toRadians(-0.0)))
-                            .addMarker(() -> {
+                            .addMarker(new Vector2d(-35.0,20.0),() -> {
                                 changeTrajectoryState(TrajectoryState.MOVE_TO_FOUNDATION);
                                 return Unit.INSTANCE;
                             })
@@ -243,8 +246,8 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                             })
                             .build();
                     drive.followTrajectory(backup);
-                }else if (patternFinal== AutoCVUtil.Pattern.PATTERN_B){
-                    Trajectory backup = new TrajectoryBuilder(drive.getPoseEstimate(),BASE_CONSTRAINTS)
+                } else if (patternFinal == AutoCVUtil.Pattern.PATTERN_B) {
+                    Trajectory backup = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
                             .lineTo(new Vector2d(-33.0, 40), new LinearInterpolator(Math.toRadians(-100.0), Math.toRadians(0.0)))
                             .lineTo(new Vector2d(-0.0, 40), new LinearInterpolator(Math.toRadians(-100), Math.toRadians(-80)))
                             .lineTo(new Vector2d(38, 40), new LinearInterpolator(Math.toRadians(-180), Math.toRadians(0)))
@@ -255,8 +258,8 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                             })
                             .build();
                     drive.followTrajectory(backup);
-                }else if (patternFinal== AutoCVUtil.Pattern.PATTERN_C){
-                    Trajectory backup = new TrajectoryBuilder(drive.getPoseEstimate(),BASE_CONSTRAINTS)
+                } else if (patternFinal == AutoCVUtil.Pattern.PATTERN_C) {
+                    Trajectory backup = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
                             .lineTo(new Vector2d(-33.0, 40), new LinearInterpolator(Math.toRadians(-120.0), Math.toRadians(0.0)))
                             .lineTo(new Vector2d(-0.0, 40), new LinearInterpolator(Math.toRadians(-120), Math.toRadians(-80)))
                             .lineTo(new Vector2d(38, 40), new LinearInterpolator(Math.toRadians(-180), Math.toRadians(0)))
