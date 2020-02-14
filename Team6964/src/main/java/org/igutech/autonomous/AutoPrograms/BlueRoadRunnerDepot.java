@@ -27,7 +27,7 @@ import static org.igutech.autonomous.roadrunner.MecanumDriveBase.BASE_CONSTRAINT
 @Autonomous(name = "BlueRoadRunnerDepot", group = "igutech")
 public class BlueRoadRunnerDepot extends LinearOpMode {
 
-    private final int TICK_PER_STONE = 250;
+    private final int TICK_PER_STONE = 335;
     private final DriveConstraints SLOW_CONSTRAINTS = new DriveConstraints(
             35, 30, BASE_CONSTRAINTS.maxJerk,
             BASE_CONSTRAINTS.maxAngVel, BASE_CONSTRAINTS.maxAngAccel, BASE_CONSTRAINTS.maxAngJerk);
@@ -37,7 +37,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
     private AutoUtilManager manager;
     public static double p = 0.02;
     public static double i = 0.0;
-    public static double d = 0.0003;
+    public static double d = 0.0002;
     public static int elevatorError;
 
     private PIDController elevatorController = new PIDController(p, i, d);
@@ -45,6 +45,8 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
     private ElevatorState elevatorState;
     private int level = 0;
     private boolean elevatorEnabled = true;
+
+    public static AutoCVUtil.Pattern testPattern= AutoCVUtil.Pattern.PATTERN_C;
 
     IguMecanumDriveBase drive;
     DriveConstraints slowConstraints = new DriveConstraints(
@@ -70,9 +72,9 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
         drive.setPoseEstimate(new Pose2d(-33.0, 63.0, Math.toRadians(-90.0)));
         manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
         manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
-        manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
+        manager.getHardware().getServos().get("RotationServo").setPosition(0.2);
         manager.getHardware().getServos().get("CapServo").setPosition(0.54);
-
+        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
 
         manager.getCvUtil().activate();
         AutoCVUtil.Pattern pattern = AutoCVUtil.Pattern.UNKNOWN;
@@ -89,7 +91,8 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
         }
 
         if (isStopRequested()) return;
-        patternFinal = pattern;
+        //patternFinal = pattern;
+        patternFinal=testPattern;
         telemetry.addData("Final Pattern", patternFinal);
         telemetry.update();
 
@@ -119,6 +122,8 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
             dashboardTelemetry.addData("x error", drive.getLastError().getX());
             dashboardTelemetry.addData("y error", drive.getLastError().getY());
             dashboardTelemetry.addData("heading error", drive.getLastError().getHeading());
+            telemetry.addData("stage", state);
+            telemetry.update();
             drive.update();
             dashboardTelemetry.update();
 
@@ -172,7 +177,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                                 return Unit.INSTANCE;
                             })
                             .build();
-                    drive.followTrajectorySync(preIntake);
+                    drive.followTrajectory(preIntake);
                 }
                 break;
 
@@ -206,7 +211,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                                 return Unit.INSTANCE;
                             })
                             .build();
-                    drive.followTrajectorySync(intake);
+                    drive.followTrajectory(intake);
                 } else if (patternFinal == AutoCVUtil.Pattern.PATTERN_C) {
                     Trajectory intake = new TrajectoryBuilder(drive.getPoseEstimate(), slowConstraints)
                             .addMarker(() -> {
@@ -221,7 +226,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                                 return Unit.INSTANCE;
                             })
                             .build();
-                    drive.followTrajectorySync(intake);
+                    drive.followTrajectory(intake);
                 }
                 break;
 
@@ -237,7 +242,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                                 return Unit.INSTANCE;
                             })
                             .build();
-                    drive.followTrajectorySync(backup);
+                    drive.followTrajectory(backup);
                 }else if (patternFinal== AutoCVUtil.Pattern.PATTERN_B){
                     Trajectory backup = new TrajectoryBuilder(drive.getPoseEstimate(),BASE_CONSTRAINTS)
                             .lineTo(new Vector2d(-33.0, 40), new LinearInterpolator(Math.toRadians(-100.0), Math.toRadians(0.0)))
@@ -249,7 +254,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                                 return Unit.INSTANCE;
                             })
                             .build();
-                    drive.followTrajectorySync(backup);
+                    drive.followTrajectory(backup);
                 }else if (patternFinal== AutoCVUtil.Pattern.PATTERN_C){
                     Trajectory backup = new TrajectoryBuilder(drive.getPoseEstimate(),BASE_CONSTRAINTS)
                             .lineTo(new Vector2d(-33.0, 40), new LinearInterpolator(Math.toRadians(-120.0), Math.toRadians(0.0)))
@@ -261,7 +266,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                                 return Unit.INSTANCE;
                             })
                             .build();
-                    drive.followTrajectorySync(backup);
+                    drive.followTrajectory(backup);
                 }
 
                 break;
