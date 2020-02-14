@@ -126,7 +126,7 @@ public class StoneElevator extends Module {
                     }
                     break;
                 case DEFAULT:
-                    if(Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition()<800){
+                    if(Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition()>-400){
                         level = 5;
                     }
                     autoMode = true;
@@ -134,10 +134,9 @@ public class StoneElevator extends Module {
                         time = System.currentTimeMillis();
                         reset = false;
                     }
-                    //Teleop.getInstance().getHardware().getServos().get("TransferServo").setPosition(0.43);
 
-                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() > 360) {
-                        Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.28);
+                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() < -500) {
+                        Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.88);
 
                         if ((System.currentTimeMillis() - time) > 2000) {
                             elevatorState = ElevatorState.DOWN;
