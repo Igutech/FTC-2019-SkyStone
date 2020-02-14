@@ -149,6 +149,7 @@ public class RoadRunnerTestOp extends LinearOpMode {
             case STRAFE:
                 Trajectory strafe = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
                         .strafeRight(35)
+
                         .addDisplacementMarker(() -> {
                             changeTrajectoryState(TrajectoryState.OFF);
                             //changeElevatorState(ElevatorState.OFF);

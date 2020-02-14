@@ -19,10 +19,11 @@ dependencies {
     implementation project(':FtcRobotController')
     implementation 'com.acmerobotics.dashboard:dashboard:0.3.6'
     implementation 'org.apache.commons:commons-math3:3.0'
-    implementation 'com.acmerobotics.roadrunner:core:0.4.7'
+   // implementation 'com.acmerobotics.roadrunner:core:0.4.7'
+    implementation 'com.acmerobotics.roadrunner:core:0.5.0-SNAPSHOT'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.github.dogecv:dogecv:2020.4-alpha'
-    implementation files('C:/Users/Jiaming/Desktop/OpenRC/libs/road-runner-core-0.5.0-SNAPSHOT.jar')
+    //implementation files('C:/Users/Jiaming/Desktop/OpenRC/libs/road-runner-core-0.5.0-SNAPSHOT.jar')
 }
 repositories {
     mavenCentral()
