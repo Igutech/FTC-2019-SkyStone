@@ -70,7 +70,6 @@ public class Hardware {
         servos.put("FoundationServo_right", hardwareMap.servo.get("FoundationServo_right"));
         servos.put("GrabberServo", hardwareMap.servo.get("GrabberServo"));
         servos.put("RotationServo", hardwareMap.servo.get("RotationServo"));
-        //servos.put("TransferServo", hardwareMap.servo.get("TransferServo"));
         servos.put("CapServo", hardwareMap.servo.get("CapServo"));
 
 
