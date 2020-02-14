@@ -26,7 +26,7 @@ import static org.igutech.autonomous.roadrunner.MecanumDriveBase.BASE_CONSTRAINT
 @Autonomous(name = "RoadRunnerTestOp", group = "igutech")
 public class RoadRunnerTestOp extends LinearOpMode {
 
-    private final int TICK_PER_STONE = 250;
+    private final int TICK_PER_STONE = 335;
     private final DriveConstraints SLOW_CONSTRAINTS = new DriveConstraints(
             35, 30, BASE_CONSTRAINTS.maxJerk,
             BASE_CONSTRAINTS.maxAngVel, BASE_CONSTRAINTS.maxAngAccel, BASE_CONSTRAINTS.maxAngJerk);
@@ -36,7 +36,7 @@ public class RoadRunnerTestOp extends LinearOpMode {
     private AutoUtilManager manager;
     public static double p=0.02;
     public static double i=0.0;
-    public static double d=0.0003;
+    public static double d=0.0002;
     public static int elevatorError;
 
     private PIDController elevatorController = new PIDController(p, i, d);
@@ -63,9 +63,9 @@ public class RoadRunnerTestOp extends LinearOpMode {
 
         manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
         manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
-        manager.getHardware().getServos().get("TransferServo").setPosition(0.43);
-        manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
+        manager.getHardware().getServos().get("RotationServo").setPosition(0.2);
         manager.getHardware().getServos().get("CapServo").setPosition(0.54);
+        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
 
 
         manager.getCvUtil().activate();
@@ -83,6 +83,8 @@ public class RoadRunnerTestOp extends LinearOpMode {
         }
 
         if (isStopRequested()) return;
+        double startPos=manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition();
+
         final AutoCVUtil.Pattern patternFinal = pattern;
         telemetry.addData("Final Pattern", patternFinal);
         telemetry.update();
@@ -96,7 +98,7 @@ public class RoadRunnerTestOp extends LinearOpMode {
         while (!isStopRequested()) {
 
 
-            int setPoint = level * TICK_PER_STONE;
+            int setPoint = (int) startPos - (level * TICK_PER_STONE);
             elevatorController.updateSetpoint(setPoint);
             elevatorError=setPoint-manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition();
             if (Math.abs(setPoint - manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition()) > 50) {
@@ -127,10 +129,9 @@ public class RoadRunnerTestOp extends LinearOpMode {
             case FORWARD:
                 Trajectory forward = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
                         .forward(50)
-                        .addMarker(() -> {
+                        .addDisplacementMarker(() -> {
                             changeTrajectoryState(TrajectoryState.BACKWARD);
                             //changeElevatorState(ElevatorState.DOWN);
-                            return Unit.INSTANCE;
                         })
                         .build();
                 drive.followTrajectory(forward);
@@ -138,11 +139,9 @@ public class RoadRunnerTestOp extends LinearOpMode {
             case BACKWARD:
                 Trajectory backward = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
                         .back(50)
-                        .addMarker(() -> {
+                        .addDisplacementMarker(() -> {
                             changeTrajectoryState(TrajectoryState.STRAFE);
                             //changeTrajectoryState(TrajectoryState.OFF);
-
-                            return Unit.INSTANCE;
                         })
                         .build();
                 drive.followTrajectory(backward);
@@ -150,10 +149,9 @@ public class RoadRunnerTestOp extends LinearOpMode {
             case STRAFE:
                 Trajectory strafe = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
                         .strafeRight(35)
-                        .addMarker(() -> {
+                        .addDisplacementMarker(() -> {
                             changeTrajectoryState(TrajectoryState.OFF);
                             //changeElevatorState(ElevatorState.OFF);
-                            return Unit.INSTANCE;
                         })
                         .build();
                 drive.followTrajectory(strafe);
@@ -175,7 +173,6 @@ public class RoadRunnerTestOp extends LinearOpMode {
                 level=0;
         }
 
-
     }
 
 
@@ -194,6 +191,3 @@ public class RoadRunnerTestOp extends LinearOpMode {
     }
 
 }
-
-
-
