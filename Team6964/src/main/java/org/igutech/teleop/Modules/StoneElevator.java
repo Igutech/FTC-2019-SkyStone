@@ -1,5 +1,7 @@
 package org.igutech.teleop.Modules;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -47,11 +49,11 @@ public class StoneElevator extends Module {
     private boolean needToEstimatePos = false;
 
     private int level = 0;
-    public static int TICK_PER_STONE = 240;
+    public static int TICK_PER_STONE = 335;
 
     public static double p = 0.02;
     public static double i = 0.00;
-    public static double d = 0.0005;
+    public static double d = 0.0002;
     private int lastLevel = 0;
     private boolean automaticMode = true;
 
@@ -79,6 +81,10 @@ public class StoneElevator extends Module {
         currentButtonPositionLeftBumper = gamepadService.getDigital(2, "left_bumper");
         currentButtonPositionBack = gamepadService.getDigital(2, "back");
         Teleop.getInstance().telemetry.addData("encoder", Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition());
+        Teleop.getInstance().telemetry.addData("level", level);
+        Teleop.getInstance().telemetry.addData("lastlevel", lastLevel);
+
+
         if (currentButtonPositionDpadUp && !previousButtonPositionDpadUp) {
             elevatorState = ElevatorState.RISE;
             lastLevel++;
@@ -114,7 +120,7 @@ public class StoneElevator extends Module {
                 case DOWN:
                     level = 0;
                     autoMode = true;
-                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() < startPos + 10) {
+                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() >startPos-10 ) {
                         autoMode = false;
                         elevatorState = ElevatorState.OFF;
                     }
@@ -128,7 +134,7 @@ public class StoneElevator extends Module {
                         time = System.currentTimeMillis();
                         reset = false;
                     }
-                    Teleop.getInstance().getHardware().getServos().get("TransferServo").setPosition(0.43);
+                    //Teleop.getInstance().getHardware().getServos().get("TransferServo").setPosition(0.43);
 
                     if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() > 360) {
                         Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.28);
@@ -151,8 +157,12 @@ public class StoneElevator extends Module {
         }
 
         if (autoMode) {
-            level = (int) FTCMath.clamp(0, 8, level);
-            int setPoint = (int) startPos + (level * TICK_PER_STONE);
+            level = (int) FTCMath.clamp(0, 12, level);
+             int setPoint = (int) startPos - (level * TICK_PER_STONE);
+            //int setPoint = -1* (level * TICK_PER_STONE);
+            //Teleop.getInstance().telemetry.addData("sp",(int) startPos - (level * TICK_PER_STONE) );
+            Log.d("logs", String.format("%4f %d %4f %d",startPos, level,startPos - (level * TICK_PER_STONE),Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition()
+                    ));
             elevatorController.updateSetpoint(setPoint);
             if (Math.abs(setPoint - Teleop.getInstance().getHardware().getMotors()
                     .get("stoneElevator").getCurrentPosition()) > 50) {
