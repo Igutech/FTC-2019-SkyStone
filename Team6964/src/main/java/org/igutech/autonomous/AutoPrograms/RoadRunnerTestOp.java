@@ -10,7 +10,6 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.igutech.autonomous.roadrunner.IguMecanumDriveBase;
@@ -35,38 +34,36 @@ public class RoadRunnerTestOp extends LinearOpMode {
     private FtcDashboard dashboard;
 
     private AutoUtilManager manager;
-    public static double p = 0.02;
-    public static double i = 0.0;
-    public static double d = 0.0003;
+    public static double p=0.02;
+    public static double i=0.0;
+    public static double d=0.0003;
     public static int elevatorError;
 
     private PIDController elevatorController = new PIDController(p, i, d);
     private TrajectoryState state;
     private ElevatorState elevatorState;
-    private int level = 0;
-    private boolean elevatorEnabled = true;
+    private int level=0;
 
     IguMecanumDriveBase drive;
 
-    private ElapsedTime runtime = new ElapsedTime();
-    public boolean reset = true;
-    public double time;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        dashboard = FtcDashboard.getInstance();
+        dashboard= FtcDashboard.getInstance();
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
 
         manager = new AutoUtilManager(hardwareMap, "RedRoadRunnerDepot");
         drive = new IguMecanumDriveBase(manager);
         manager.getDriveUtil().resetEncoders();
-        drive.setPoseEstimate(new Pose2d(-33.0, 63.0, Math.toRadians(-90.0)));
+        drive.setPoseEstimate(new Pose2d(50.0, -63.0, Math.toRadians(-180.0)));
+
 
         manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
         manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
+        manager.getHardware().getServos().get("TransferServo").setPosition(0.43);
         manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
         manager.getHardware().getServos().get("CapServo").setPosition(0.54);
 
@@ -94,21 +91,21 @@ public class RoadRunnerTestOp extends LinearOpMode {
             manager.getCvUtil().shutdown();
         }).start();
 
-        changeTrajectoryState(TrajectoryState.INTAKE_AND_MOVE_TO_FOUNDATION);
+        changeTrajectoryState(TrajectoryState.FORWARD);
         changeElevatorState(ElevatorState.UP);
         while (!isStopRequested()) {
 
+
             int setPoint = level * TICK_PER_STONE;
             elevatorController.updateSetpoint(setPoint);
-            elevatorError = setPoint - manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition();
+            elevatorError=setPoint-manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition();
             if (Math.abs(setPoint - manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition()) > 50) {
                 elevatorController.reset(manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition());
             }
             double power = elevatorController.update(manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition());
             power = FTCMath.clamp(-0.5, 0.5, power);
-            if (elevatorEnabled) {
-                manager.getHardware().getMotors().get("stoneElevator").setPower(power);
-            }
+            manager.getHardware().getMotors().get("stoneElevator").setPower(power);
+
             Pose2d currentPose = drive.getPoseEstimate();
             dashboardTelemetry.addData("x", currentPose.getX());
             dashboardTelemetry.addData("y", currentPose.getY());
@@ -120,79 +117,47 @@ public class RoadRunnerTestOp extends LinearOpMode {
             dashboardTelemetry.update();
 
         }
-        changeTrajectoryState(TrajectoryState.OFF);
-        changeElevatorState(ElevatorState.OFF);
+
 
     }
 
     public synchronized void changeTrajectoryState(TrajectoryState changeState) {
-        state = changeState;
+        state=changeState;
         switch (changeState) {
-            case INTAKE_AND_MOVE_TO_FOUNDATION:
-                Trajectory moveToFoundation = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
-                        .addMarker(5.0, () -> {
-                            changeElevatorState(ElevatorState.UP);
-                            return Unit.INSTANCE;
-                        })
+            case FORWARD:
+                Trajectory forward = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
+                        .forward(50)
                         .addMarker(() -> {
-                            manager.getHardware().getMotors().get("left_intake").setPower(-0.6);
-                            manager.getHardware().getMotors().get("right_intake").setPower(0.6);
-                            manager.getHardware().getMotors().get("transferMotor").setPower(-1.0);
-                            return Unit.INSTANCE;
-                        })
-                        //intake
-                        .lineTo(new Vector2d(-33.0, 35.0), new LinearInterpolator(Math.toRadians(-90.0), Math.toRadians(20.0)))
-                        .lineTo(new Vector2d(-33.0, 20.0), new LinearInterpolator(Math.toRadians(-70.0), Math.toRadians(0.0)))
-                        //back up
-                        .lineTo(new Vector2d(-33.0, 38.0), new LinearInterpolator(Math.toRadians(-70.0), Math.toRadians(0.0)))
-                        //normalize the robot  and drive to foundation
-                        .lineTo(new Vector2d(-0.0, 38.0), new LinearInterpolator(Math.toRadians(-70.0), Math.toRadians(-110.0)))
-                        .lineTo(new Vector2d(35.0, 38.0), new LinearInterpolator(Math.toRadians(-180.0), Math.toRadians(0.0)))
-                        .lineTo(new Vector2d(50.0, 30.0), new LinearInterpolator(Math.toRadians(-180.0), Math.toRadians(-90.0)))
-                        .addMarker(() -> {
-                            changeTrajectoryState(TrajectoryState.LATCH_ON_FOUNDATION_AND_PLACE);
+                            changeTrajectoryState(TrajectoryState.BACKWARD);
+                            //changeElevatorState(ElevatorState.DOWN);
                             return Unit.INSTANCE;
                         })
                         .build();
-                drive.followTrajectory(moveToFoundation);
+                drive.followTrajectory(forward);
                 break;
-            case LATCH_ON_FOUNDATION_AND_PLACE:
-                manager.getHardware().getServos().get("RotationServo").setPosition(0.95);
-                sleep(300);
-                changeElevatorState(ElevatorState.DOWN);
-                if (manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition() < 10) {
-                    sleep(200);
-                    manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
-                    changeTrajectoryState(TrajectoryState.MOVE_FOUNDATION_AND_GET_SECOND_STONE);
-                    changeElevatorState(ElevatorState.OFF);
-                }
-                break;
-            case MOVE_FOUNDATION_AND_GET_SECOND_STONE:
-                Trajectory secondStone = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
-                        .lineTo(new Vector2d(50.0, 40.0), new LinearInterpolator(Math.toRadians(90.0), Math.toRadians(0.0)))
-
-                        .lineTo(new Vector2d(15.0, 38.0), new LinearInterpolator(Math.toRadians(90.0), Math.toRadians(90.0)))
+            case BACKWARD:
+                Trajectory backward = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
+                        .back(50)
                         .addMarker(() -> {
-                            changeElevatorState(ElevatorState.DEFAULT);
+                            changeTrajectoryState(TrajectoryState.STRAFE);
+                            //changeTrajectoryState(TrajectoryState.OFF);
+
                             return Unit.INSTANCE;
                         })
-
-                        .lineTo(new Vector2d(-35.0, 38.0), new LinearInterpolator(Math.toRadians(180.0), Math.toRadians(0.0)))
-
-                        .lineTo(new Vector2d(-38.0, 38.0), new LinearInterpolator(Math.toRadians(180.0), Math.toRadians(45.0)))
-                        .lineTo(new Vector2d(-38.0, 20.0), new LinearInterpolator(Math.toRadians(225.0), Math.toRadians(0.0)))
-                        .lineTo(new Vector2d(-38.0, 38.0), new LinearInterpolator(Math.toRadians(225.0), Math.toRadians(0.0)))
-                        .lineTo(new Vector2d(-35.0, 38.0), new LinearInterpolator(Math.toRadians(225.0), Math.toRadians(-45.0)))
-                        .lineTo(new Vector2d(50.0, 38.0), new LinearInterpolator(Math.toRadians(180.0), Math.toRadians(0.0)))
+                        .build();
+                drive.followTrajectory(backward);
+                break;
+            case STRAFE:
+                Trajectory strafe = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
+                        .strafeRight(35)
                         .addMarker(() -> {
                             changeTrajectoryState(TrajectoryState.OFF);
+                            //changeElevatorState(ElevatorState.OFF);
                             return Unit.INSTANCE;
                         })
                         .build();
-                drive.followTrajectory(secondStone);
+                drive.followTrajectory(strafe);
             case OFF:
-                elevatorEnabled = false;
-                break;
 
         }
 
@@ -201,51 +166,33 @@ public class RoadRunnerTestOp extends LinearOpMode {
     public synchronized void changeElevatorState(ElevatorState state) {
         switch (state) {
             case DOWN:
-                level = 0;
+                level=0;
                 break;
             case UP:
-                level = 5;
+                level=3;
                 break;
             case OFF:
-                elevatorEnabled = false;
-                break;
-            case DEFAULT:
-                if (manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition() < 800) {
-                    level = 5;
-                }
-                if (reset) {
-                    time = System.currentTimeMillis();
-                    reset = false;
-                }
-
-                if (manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition() > 360) {
-                    manager.getHardware().getServos().get("RotationServo").setPosition(0.28);
-
-                    if ((System.currentTimeMillis() - time) > 2000) {
-                        elevatorState = ElevatorState.DOWN;
-                        reset = true;
-                    }
-                }
-                break;
+                level=0;
         }
+
 
     }
 
 
     private enum TrajectoryState {
-        INTAKE_AND_MOVE_TO_FOUNDATION,
-        LATCH_ON_FOUNDATION_AND_PLACE,
-        MOVE_FOUNDATION_AND_GET_SECOND_STONE,
+        FORWARD,
+        BACKWARD,
+        STRAFE,
         OFF
-
     }
 
     private enum ElevatorState {
         DOWN,
         UP,
-        OFF,
-        DEFAULT
+        OFF
 
     }
 
 }
+
+
