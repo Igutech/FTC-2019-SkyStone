@@ -26,23 +26,24 @@ public class Transfer extends Module {
         if (currentButtonPositionA && !previousButtonPositionA) {
             toggleA = !toggleA;
             if (toggleA) {
-                Teleop.getInstance().getHardware().getServos().get("GrabberServo").setPosition(0.3);
+                Teleop.getInstance().getHardware().getServos().get("GrabberServo").setPosition(0.95);
             }
             if (!toggleA) {
-                Teleop.getInstance().getHardware().getServos().get("GrabberServo").setPosition(0.1);
+                Teleop.getInstance().getHardware().getServos().get("GrabberServo").setPosition(0.65);
             }
         }
         previousButtonPositionA = currentButtonPositionA;
 
         boolean currentButtonPositionY = gamepadService.getDigital(2, "y");
 
+        //resting 0.2, stack 0.88
         if (currentButtonPositionY && !previousButtonPositionY) {
             toggleY = !toggleY;
             if (toggleY) {
-                Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.95);
+                Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.88);
             }
             if (!toggleY) {
-                Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.28);
+                Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.2);
             }
         }
         previousButtonPositionY = currentButtonPositionY;
