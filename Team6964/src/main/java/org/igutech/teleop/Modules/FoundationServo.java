@@ -26,11 +26,11 @@ public class FoundationServo extends Module {
         if (currentButtonPosition && !previousButtonPosition) {
             toggle = !toggle;
             if (toggle) {
-                Teleop.getInstance().getHardware().getServos().get("FoundationServo_left").setPosition(0.6);
+                Teleop.getInstance().getHardware().getServos().get("FoundationServo_left").setPosition(0.93);
                 Teleop.getInstance().getHardware().getServos().get("FoundationServo_right").setPosition(0.6);
             }
             if (!toggle) {
-                Teleop.getInstance().getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
+                Teleop.getInstance().getHardware().getServos().get("FoundationServo_left").setPosition(0.55);
                 Teleop.getInstance().getHardware().getServos().get("FoundationServo_right").setPosition(0.99);
             }
         }
