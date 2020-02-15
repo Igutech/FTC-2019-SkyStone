@@ -22,15 +22,16 @@ public class FoundationServo extends Module {
 
         currentButtonPosition = gamepadService.getDigital(1, "right_bumper");
 
+        //right; free 0.99, holding 0.6
         if (currentButtonPosition && !previousButtonPosition) {
             toggle = !toggle;
             if (toggle) {
                 Teleop.getInstance().getHardware().getServos().get("FoundationServo_left").setPosition(0.6);
-                Teleop.getInstance().getHardware().getServos().get("FoundationServo_right").setPosition(0.9);
+                Teleop.getInstance().getHardware().getServos().get("FoundationServo_right").setPosition(0.6);
             }
             if (!toggle) {
                 Teleop.getInstance().getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
-                Teleop.getInstance().getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
+                Teleop.getInstance().getHardware().getServos().get("FoundationServo_right").setPosition(0.99);
             }
         }
         previousButtonPosition = currentButtonPosition;

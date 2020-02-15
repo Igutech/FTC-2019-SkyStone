@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
-@Disabled
 @TeleOp
 public class ServoTuner extends LinearOpMode {
 
