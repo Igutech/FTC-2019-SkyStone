@@ -23,8 +23,11 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
 
     private List<DcMotorEx> motors;
     private AutoUtilManager utils;
-    private PIDController elevatorController = new PIDController(0.02, 0.0, 0.0003);
+    private PIDController elevatorController = new PIDController(0.015, 0.0, 0.0002);
     public static final boolean RUN_USING_ENCODER = true;
+    private boolean enableElevator=false;
+    private ElevatorState elevatorState = ElevatorState.OFF;
+    int startPos = manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition();
 
     public IguMecanumDriveBase(AutoUtilManager utils) {
         super();
@@ -58,7 +61,9 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
     @Override
     public void update() {
         super.update();
-        updateElevator();
+        if(enableElevator){
+            updateElevator();
+        }
     }
 
 
@@ -112,11 +117,40 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
     }
 
     public void setElevatorTick(int tick){
+        enableElevator=true;
         elevatorController.updateSetpoint(tick);
     }
     public void updateElevator(){
+//        if(elevatorState==ElevatorState.DOWN &&
+//                manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition()>startPos-20 ){
+//            changeElevatorState(ElevatorState.OFF);
+//        }
         double power = elevatorController.update(manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition());
         power = FTCMath.clamp(-0.5, 0.5, power);
         manager.getHardware().getMotors().get("stoneElevator").setPower(power);
+    }
+
+    public synchronized void changeElevatorState(ElevatorState state) {
+        elevatorState=state;
+        switch (elevatorState) {
+            case DOWN:
+                setElevatorTick(-20);
+                break;
+            case UP:
+                setElevatorTick(-700);
+                break;
+            case OFF:
+                enableElevator=false;
+                break;
+
+        }
+
+    }
+
+    public enum ElevatorState {
+        DOWN,
+        UP,
+        OFF
+
     }
 }
