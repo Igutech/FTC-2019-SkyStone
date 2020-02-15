@@ -120,28 +120,17 @@ public class StoneElevator extends Module {
                 case DOWN:
                     level = 0;
                     autoMode = true;
-                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() >startPos-10 ) {
+                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() > startPos - 10) {
                         autoMode = false;
                         elevatorState = ElevatorState.OFF;
                     }
                     break;
                 case DEFAULT:
-                    if(Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition()<800){
-                        level = 3;
-                    }
+                    level = 0;
                     autoMode = true;
-                    if (reset) {
-                        time = System.currentTimeMillis();
-                        reset = false;
-                    }
-
-                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() < -900) {
-                        Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.88);
-
-                        if ((System.currentTimeMillis() - time) > 2000) {
-                            elevatorState = ElevatorState.DOWN;
-                            reset = true;
-                        }
+                    if (Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition() > startPos - 10) {
+                        Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.2);
+                        elevatorState = ElevatorState.OFF;
                     }
                     break;
                 case OFF:
@@ -157,11 +146,11 @@ public class StoneElevator extends Module {
 
         if (autoMode) {
             level = (int) FTCMath.clamp(0, 12, level);
-             int setPoint = (int) startPos - (level * TICK_PER_STONE);
+            int setPoint = (int) startPos - (level * TICK_PER_STONE);
             //int setPoint = -1* (level * TICK_PER_STONE);
             //Teleop.getInstance().telemetry.addData("sp",(int) startPos - (level * TICK_PER_STONE) );
-            Log.d("logs", String.format("%4f %d %4f %d",startPos, level,startPos - (level * TICK_PER_STONE),Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition()
-                    ));
+            Log.d("logs", String.format("%4f %d %4f %d", startPos, level, startPos - (level * TICK_PER_STONE), Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition()
+            ));
             elevatorController.updateSetpoint(setPoint);
             if (Math.abs(setPoint - Teleop.getInstance().getHardware().getMotors()
                     .get("stoneElevator").getCurrentPosition()) > 50) {
