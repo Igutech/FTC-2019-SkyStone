@@ -61,11 +61,11 @@ public class RoadRunnerTestOp extends LinearOpMode {
         drive.setPoseEstimate(new Pose2d(50.0, -63.0, Math.toRadians(-180.0)));
 
 
-        manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
-        manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
-        manager.getHardware().getServos().get("RotationServo").setPosition(0.2);
-        manager.getHardware().getServos().get("CapServo").setPosition(0.54);
-        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
+//        manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
+//        manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
+//        manager.getHardware().getServos().get("RotationServo").setPosition(0.2);
+//        manager.getHardware().getServos().get("CapServo").setPosition(0.54);
+//        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
 
 
         manager.getCvUtil().activate();
@@ -93,30 +93,28 @@ public class RoadRunnerTestOp extends LinearOpMode {
             manager.getCvUtil().shutdown();
         }).start();
 
-        changeTrajectoryState(TrajectoryState.FORWARD);
-        changeElevatorState(ElevatorState.UP);
+        Trajectory moveFoundationPatternA = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
+                .addMarker(0.5,() -> {
+                    drive.changeElevatorState(IguMecanumDriveBase.ElevatorState.UP);
+                    return Unit.INSTANCE;
+                })
+                .forward(40.0)
+                .build();
+        drive.followTrajectorySync(moveFoundationPatternA);
+        Trajectory moveFoundationPatternB = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
+                .addMarker(0.5,() -> {
+                    drive.changeElevatorState(IguMecanumDriveBase.ElevatorState.DOWN);
+                    return Unit.INSTANCE;
+                })
+                .back(40.0)
+                .build();
+        drive.followTrajectorySync(moveFoundationPatternB);
+
+
         while (!isStopRequested()) {
 
 
-            int setPoint = (int) startPos - (level * TICK_PER_STONE);
-            elevatorController.updateSetpoint(setPoint);
-            elevatorError=setPoint-manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition();
-            if (Math.abs(setPoint - manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition()) > 50) {
-                elevatorController.reset(manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition());
-            }
-            double power = elevatorController.update(manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition());
-            power = FTCMath.clamp(-0.5, 0.5, power);
-            manager.getHardware().getMotors().get("stoneElevator").setPower(power);
-
-            Pose2d currentPose = drive.getPoseEstimate();
-            dashboardTelemetry.addData("x", currentPose.getX());
-            dashboardTelemetry.addData("y", currentPose.getY());
-            dashboardTelemetry.addData("heading", currentPose.getHeading());
-            dashboardTelemetry.addData("x error", drive.getLastError().getX());
-            dashboardTelemetry.addData("y error", drive.getLastError().getY());
-            dashboardTelemetry.addData("heading error", drive.getLastError().getHeading());
             drive.update();
-            dashboardTelemetry.update();
 
         }
 

@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.MotionDetection;
 import org.igutech.autonomous.roadrunner.IguMecanumDriveBase;
 import org.igutech.autonomous.util.AutoCVUtil;
 import org.igutech.autonomous.util.AutoUtilManager;
@@ -24,6 +25,11 @@ public class RedRoadRunnerDepot extends LinearOpMode {
 
     public static AutoUtilManager manager;
 
+    public static int x = 50;
+    public static int y = -50;
+    public static int angle = -30;
+
+
     public final int TICK_PER_STONE = 335;
     public boolean elevatorRunning = false;
     public boolean reset = true;
@@ -35,7 +41,7 @@ public class RedRoadRunnerDepot extends LinearOpMode {
 
     IguMecanumDriveBase drive;
     DriveConstraints slowConstraints = new DriveConstraints(
-            35, 20, BASE_CONSTRAINTS.maxJerk,
+            30, 15, BASE_CONSTRAINTS.maxJerk,
             BASE_CONSTRAINTS.maxAngVel, BASE_CONSTRAINTS.maxAngAccel, BASE_CONSTRAINTS.maxAngJerk);
 
     @Override
@@ -55,7 +61,6 @@ public class RedRoadRunnerDepot extends LinearOpMode {
         AutoCVUtil.Pattern pattern = AutoCVUtil.Pattern.UNKNOWN;
 
         level = 0;
-        startPos = manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition();
 
         while (!opModeIsActive() && !isStopRequested()) {
             AutoCVUtil.Pattern currentPattern = manager.getCvUtil().getPattern();
@@ -64,6 +69,7 @@ public class RedRoadRunnerDepot extends LinearOpMode {
             telemetry.addData("status", "waiting for start command...");
             telemetry.addData("pattern", pattern);
             telemetry.addData("currentPattern", currentPattern);
+            //telemetry.addData("start", startPos);
             telemetry.update();
         }
 
@@ -75,13 +81,13 @@ public class RedRoadRunnerDepot extends LinearOpMode {
             manager.getCvUtil().shutdown();
         }).start();
 
-        drive.setElevatorTick(startPos);
+        drive.changeElevatorState(IguMecanumDriveBase.ElevatorState.OFF);
 
         if (patternFinal == AutoCVUtil.Pattern.PATTERN_A) {
             manager.getHardware().getMotors().get("right_intake").setPower(-0.4);
             Trajectory preIntakePatternA = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
                     //intake
-                    .lineTo(new Vector2d(-33.0, -35.0), new LinearInterpolator(Math.toRadians(90.0), Math.toRadians(-20.0)))
+                    .lineTo(new Vector2d(-33.0, -35.0), new LinearInterpolator(Math.toRadians(90.0), Math.toRadians(-10.0)))
                     .build();
             drive.followTrajectorySync(preIntakePatternA);
 
@@ -90,54 +96,101 @@ public class RedRoadRunnerDepot extends LinearOpMode {
             manager.getHardware().getMotors().get("transferMotor").setPower(-1.0);
 
             Trajectory intakePatternA = new TrajectoryBuilder(drive.getPoseEstimate(), slowConstraints)
-                    .lineTo(new Vector2d(-33.0, -25.0), new LinearInterpolator(Math.toRadians(70.0), Math.toRadians(0.0)))
+                    .lineTo(new Vector2d(-33.0, -25.0), new LinearInterpolator(Math.toRadians(80.0), Math.toRadians(0.0)))
                     .build();
             drive.followTrajectorySync(intakePatternA);
 
-            manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
-            sleep(200)
-            ;
             Trajectory moveToFoundationPatternA = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
+                    .addMarker(1.0, () -> {
+                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
+                        return Unit.INSTANCE;
+                    })
+                    .addMarker(1.5, () -> {
+                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
+                        return Unit.INSTANCE;
+                    })
+                    .addMarker(2.0, () -> {
+                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
+                        return Unit.INSTANCE;
+                    })
                     .lineTo(new Vector2d(-33.0, -40), new LinearInterpolator(Math.toRadians(70.0), Math.toRadians(0.0)))
                     .lineTo(new Vector2d(0.0, -40), new LinearInterpolator(Math.toRadians(70.0), Math.toRadians(110.0)))
+                    .addMarker(new Vector2d(18, -40), () -> {
+                        drive.changeElevatorState(IguMecanumDriveBase.ElevatorState.UP);
+                        return Unit.INSTANCE;
+                    })
                     .lineTo(new Vector2d(38, -40), new LinearInterpolator(Math.toRadians(180), Math.toRadians(0)))
                     .lineTo(new Vector2d(50, -33), new LinearInterpolator(Math.toRadians(180), Math.toRadians(90)))
                     .lineTo(new Vector2d(50, -30), new LinearInterpolator(Math.toRadians(270), Math.toRadians(0)))
                     .build();
             drive.followTrajectorySync(moveToFoundationPatternA);
+            manager.getHardware().getServos().get("RotationServo").setPosition(0.88);
             manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.93);
             manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.6);
-            changeElevatorState(ElevatorState.UP);
-            while (elevatorRunning && !isStopRequested()) {
-                setPoint = startPos - (level * TICK_PER_STONE);
-                drive.setElevatorTick(setPoint);
-                telemetry.addData("tick", setPoint);
-                telemetry.update();
-                if (reset) {
-                    time = System.currentTimeMillis();
-                    reset = false;
-                }
-                if (manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition() < -500) {
-                    manager.getHardware().getServos().get("RotationServo").setPosition(0.88);
-                    sleep(600);
-                    changeElevatorState(ElevatorState.DOWN);
-                    drive.setElevatorTick(startPos - 20);
-                    if (manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition() > -80) {
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
-                        elevatorRunning = false;
-                    }
-                }
-                System.out.println("tick: " + setPoint);
-                System.out.println("encoder: " + manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition());
-                drive.update();
-            }
-
-            drive.setElevatorTick(startPos);
-
+            sleep(500);
             Trajectory moveFoundationPatternA = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
-                    .lineTo(new Vector2d(50.0, -60), new LinearInterpolator(Math.toRadians(270), Math.toRadians(-40.0)))
+                    .addMarker(0.5, () -> {
+                        drive.changeElevatorState(IguMecanumDriveBase.ElevatorState.DOWN);
+                        return Unit.INSTANCE;
+                    })
+                    .lineTo(new Vector2d(30, -45), new LinearInterpolator(Math.toRadians(270), Math.toRadians(-30)))
+                    .lineTo(new Vector2d(5, -45), new LinearInterpolator(Math.toRadians(240), Math.toRadians(-60)))
+                    .lineTo(new Vector2d(5, -35), new LinearInterpolator(Math.toRadians(180), Math.toRadians(0)))
                     .build();
             drive.followTrajectorySync(moveFoundationPatternA);
+            manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
+            drive.changeElevatorState(IguMecanumDriveBase.ElevatorState.OFF);
+            manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.55);
+            manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.99);
+            sleep(200);
+            Trajectory moveToSecondStonePatternA = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
+                    .lineTo(new Vector2d(-30, -35), new LinearInterpolator(Math.toRadians(180), Math.toRadians(0)))
+                    .addMarker(1.0, () -> {
+                        drive.changeElevatorState(IguMecanumDriveBase.ElevatorState.OFF);
+                        manager.getHardware().getServos().get("RotationServo").setPosition(0.2);
+                        return Unit.INSTANCE;
+                    })
+                    .lineTo(new Vector2d(-30, -30), new LinearInterpolator(Math.toRadians(180), Math.toRadians(-20)))
+
+                    .build();
+            drive.followTrajectorySync(moveToSecondStonePatternA);
+
+            Trajectory intakeSecondStone = new TrajectoryBuilder(drive.getPoseEstimate(), slowConstraints)
+                    .lineTo(new Vector2d(-30, -15), new LinearInterpolator(Math.toRadians(160), Math.toRadians(0)))
+                    .lineTo(new Vector2d(-30, -40), new LinearInterpolator(Math.toRadians(160), Math.toRadians(0)))
+                    .build();
+            drive.followTrajectorySync(intakeSecondStone);
+
+            Trajectory moveToFoundationSecondTimePatternA = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
+                    .addMarker(0.5, () -> {
+                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
+                        return Unit.INSTANCE;
+                    })
+                    .addMarker(1.0, () -> {
+                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
+                        return Unit.INSTANCE;
+                    })
+                    .addMarker(1.5, () -> {
+                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
+                        return Unit.INSTANCE;
+                    })
+                    .lineTo(new Vector2d(0.0, -40), new LinearInterpolator(Math.toRadians(135.0), Math.toRadians(45.0)))
+                    .addMarker(new Vector2d(18, -40), () -> {
+                        drive.changeElevatorState(IguMecanumDriveBase.ElevatorState.UP);
+                        return Unit.INSTANCE;
+                    })
+                    .lineTo(new Vector2d(20, -20), new LinearInterpolator(Math.toRadians(180), Math.toRadians(0)))
+                    .lineTo(new Vector2d(50, -20), new LinearInterpolator(Math.toRadians(180), Math.toRadians(0)))
+                    .build();
+            drive.followTrajectorySync(moveToFoundationSecondTimePatternA);
+            manager.getHardware().getServos().get("RotationServo").setPosition(0.88);
+            sleep(400);
+            drive.changeElevatorState(IguMecanumDriveBase.ElevatorState.DOWN);
+            sleep(800);
+            manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
+            drive.changeElevatorState(IguMecanumDriveBase.ElevatorState.OFF);
+
+
         }
 
         if (patternFinal == AutoCVUtil.Pattern.PATTERN_B) {
@@ -167,7 +220,6 @@ public class RedRoadRunnerDepot extends LinearOpMode {
                     .build();
             drive.followTrajectorySync(moveToFoundationPatternB);
 
-            changeElevatorState(ElevatorState.UP);
             while (elevatorRunning && !isStopRequested()) {
                 telemetry.addData("time", System.currentTimeMillis() - time);
                 drive.setElevatorTick(startPos - (level * TICK_PER_STONE));
@@ -179,7 +231,6 @@ public class RedRoadRunnerDepot extends LinearOpMode {
                 if (manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition() < -900) {
                     manager.getHardware().getServos().get("RotationServo").setPosition(0.88);
                     sleep(600);
-                    changeElevatorState(ElevatorState.DOWN);
                     if (manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition() > startPos - 10) {
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
                         elevatorRunning = false;
@@ -220,7 +271,6 @@ public class RedRoadRunnerDepot extends LinearOpMode {
                     .build();
             drive.followTrajectorySync(moveToFoundationPatternC);
 
-            changeElevatorState(ElevatorState.UP);
             while (elevatorRunning && !isStopRequested()) {
                 telemetry.addData("time", System.currentTimeMillis() - time);
                 int setPoint = startPos - (level * TICK_PER_STONE);
@@ -232,7 +282,6 @@ public class RedRoadRunnerDepot extends LinearOpMode {
                 if (manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition() < -900) {
                     manager.getHardware().getServos().get("RotationServo").setPosition(0.88);
                     sleep(600);
-                    changeElevatorState(ElevatorState.DOWN);
                     if (manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition() > startPos - 10) {
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
                         elevatorRunning = false;
@@ -245,31 +294,6 @@ public class RedRoadRunnerDepot extends LinearOpMode {
         while (!isStopRequested() && drive.isBusy()) {
             drive.update();
         }
-
-    }
-
-
-    public synchronized void changeElevatorState(ElevatorState state) {
-        switch (state) {
-            case DOWN:
-                level = 0;
-                elevatorRunning = true;
-                break;
-            case UP:
-                level = 3;
-                elevatorRunning = true;
-                break;
-            case OFF:
-                level = 0;
-                elevatorRunning = false;
-        }
-
-    }
-
-    private enum ElevatorState {
-        DOWN,
-        UP,
-        OFF
 
     }
 
