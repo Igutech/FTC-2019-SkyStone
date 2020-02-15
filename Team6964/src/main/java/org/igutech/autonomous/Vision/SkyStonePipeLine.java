@@ -25,15 +25,15 @@ public class SkyStonePipeLine extends OpenCvPipeline {
     public int pattern=2;
 
 
-    public static int right_one = 160;
-    public static int right_two = 200;
-    public static int right_three = 190;
-    public static int right_four = 210;
+    public static int right_one = 180;
+    public static int right_two = 100;
+    public static int right_three = 200;
+    public static int right_four = 120;
 
-    public static int left_one = 80;
-    public static int left_two = 200;
-    public static int left_three = 110;
-    public static int left_four = 210;
+    public static int left_one = 110;
+    public static int left_two = 100;
+    public static int left_three = 140;
+    public static int left_four = 115;
 
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
