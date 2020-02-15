@@ -25,13 +25,12 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
     private AutoUtilManager utils;
     private PIDController elevatorController = new PIDController(0.015, 0.0, 0.0002);
     public static final boolean RUN_USING_ENCODER = true;
-    private boolean enableElevator=false;
+    private boolean enableElevator = false;
     private ElevatorState elevatorState = ElevatorState.OFF;
     int startPos = manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition();
 
     public IguMecanumDriveBase(AutoUtilManager utils) {
         super();
-
 
 
         this.utils = utils;
@@ -61,9 +60,7 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
     @Override
     public void update() {
         super.update();
-        if(enableElevator){
-            updateElevator();
-        }
+        updateElevator();
     }
 
 
@@ -106,7 +103,7 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
     public List<Double> getWheelVelocities() {
         List<Double> wheelVelocities = new ArrayList<>();
         for (DcMotorEx motor : motors) {
-            wheelVelocities.add(AutoDriveUtil.OffsetCorrectedEncoderData.convertToUnits((int)motor.getVelocity(),AutoDriveUtil.OffsetCorrectedEncoderData.Units.INCHES));
+            wheelVelocities.add(AutoDriveUtil.OffsetCorrectedEncoderData.convertToUnits((int) motor.getVelocity(), AutoDriveUtil.OffsetCorrectedEncoderData.Units.INCHES));
         }
         return wheelVelocities;
     }
@@ -116,22 +113,29 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
         return utils.getGyroUtil().getAngle(false).firstAngle;
     }
 
-    public void setElevatorTick(int tick){
-        enableElevator=true;
+    public void setElevatorTick(int tick) {
+        enableElevator = true;
         elevatorController.updateSetpoint(tick);
     }
-    public void updateElevator(){
+
+    public void updateElevator() {
 //        if(elevatorState==ElevatorState.DOWN &&
 //                manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition()>startPos-20 ){
 //            changeElevatorState(ElevatorState.OFF);
 //        }
         double power = elevatorController.update(manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition());
         power = FTCMath.clamp(-0.5, 0.5, power);
+        if (elevatorState == ElevatorState.OFF) {
+            enableElevator = false;
+            power = 0.0;
+        }
+        System.out.println("state: " + elevatorState);
+        System.out.println("power: " + power);
         manager.getHardware().getMotors().get("stoneElevator").setPower(power);
     }
 
     public synchronized void changeElevatorState(ElevatorState state) {
-        elevatorState=state;
+        elevatorState = state;
         switch (elevatorState) {
             case DOWN:
                 setElevatorTick(-20);
@@ -140,9 +144,12 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
                 setElevatorTick(-700);
                 break;
             case OFF:
-                enableElevator=false;
-                break;
 
+                enableElevator = false;
+                break;
+            default:
+                enableElevator = false;
+                break;
         }
 
     }

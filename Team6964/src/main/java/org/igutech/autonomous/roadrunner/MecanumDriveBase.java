@@ -60,7 +60,7 @@ public abstract class MecanumDriveBase extends MecanumDrive {
     private static final double kA = 0; // Using built in motor velocity PID, don't tune this
     private static final double kStatic = 0; // Using built in motor velocity PID, don't tune this
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            40.0, 35, 0.0,
+            40.0, 30, 0.0,
             Math.toRadians(90), Math.toRadians(90), 0.0
     );
 

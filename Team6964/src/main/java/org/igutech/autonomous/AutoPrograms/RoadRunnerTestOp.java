@@ -55,10 +55,10 @@ public class RoadRunnerTestOp extends LinearOpMode {
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
 
-        manager = new AutoUtilManager(hardwareMap, "RedRoadRunnerDepot");
+        manager = new AutoUtilManager(hardwareMap, "RoadRunnerTestOp");
         drive = new IguMecanumDriveBase(manager);
         manager.getDriveUtil().resetEncoders();
-        drive.setPoseEstimate(new Pose2d(50.0, -63.0, Math.toRadians(-180.0)));
+        drive.setPoseEstimate(new Pose2d(30, -36, Math.toRadians(180)));
 
 
 //        manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
@@ -83,7 +83,6 @@ public class RoadRunnerTestOp extends LinearOpMode {
         }
 
         if (isStopRequested()) return;
-         double startPos=manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition();
 
         final AutoCVUtil.Pattern patternFinal = pattern;
         telemetry.addData("Final Pattern", patternFinal);
@@ -95,20 +94,18 @@ public class RoadRunnerTestOp extends LinearOpMode {
 
         Trajectory moveFoundationPatternA = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
                 .addMarker(0.5,() -> {
-                    drive.changeElevatorState(IguMecanumDriveBase.ElevatorState.UP);
+
+                    manager.getHardware().getMotors().get("left_intake").setPower(-0.6);
+                    manager.getHardware().getMotors().get("right_intake").setPower(0.6);
+                    manager.getHardware().getMotors().get("transferMotor").setPower(-1.0);
                     return Unit.INSTANCE;
                 })
-                .forward(40.0)
+                .lineTo(new Vector2d(30, -45), new LinearInterpolator(Math.toRadians(270), Math.toRadians(-30)))
+                .lineTo(new Vector2d(5, -45), new LinearInterpolator(Math.toRadians(240), Math.toRadians(-60)))
+                .lineTo(new Vector2d(5, -35), new LinearInterpolator(Math.toRadians(180), Math.toRadians(0)))
                 .build();
         drive.followTrajectorySync(moveFoundationPatternA);
-        Trajectory moveFoundationPatternB = new TrajectoryBuilder(drive.getPoseEstimate(), BASE_CONSTRAINTS)
-                .addMarker(0.5,() -> {
-                    drive.changeElevatorState(IguMecanumDriveBase.ElevatorState.DOWN);
-                    return Unit.INSTANCE;
-                })
-                .back(40.0)
-                .build();
-        drive.followTrajectorySync(moveFoundationPatternB);
+
 
 
         while (!isStopRequested()) {
