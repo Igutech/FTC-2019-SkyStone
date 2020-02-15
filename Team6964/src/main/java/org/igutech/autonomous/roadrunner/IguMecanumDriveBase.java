@@ -1,5 +1,6 @@
 package org.igutech.autonomous.roadrunner;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,19 +10,26 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.igutech.autonomous.util.AutoDriveUtil;
 import org.igutech.autonomous.util.AutoUtilManager;
+import org.igutech.utils.FTCMath;
+import org.igutech.utils.control.PIDController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.igutech.autonomous.AutoPrograms.RedRoadRunnerDepot.manager;
+
 public class IguMecanumDriveBase extends MecanumDriveBase {
 
     private List<DcMotorEx> motors;
     private AutoUtilManager utils;
+    private PIDController elevatorController = new PIDController(0.02, 0.0, 0.0003);
     public static final boolean RUN_USING_ENCODER = true;
 
     public IguMecanumDriveBase(AutoUtilManager utils) {
         super();
+
+
 
         this.utils = utils;
 
@@ -47,6 +55,11 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
 
     }
 
+    @Override
+    public void update() {
+        super.update();
+        updateElevator();
+    }
 
 
     @Override
@@ -96,5 +109,14 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
     @Override
     public double getRawExternalHeading() {
         return utils.getGyroUtil().getAngle(false).firstAngle;
+    }
+
+    public void setElevatorTick(int tick){
+        elevatorController.updateSetpoint(tick);
+    }
+    public void updateElevator(){
+        double power = elevatorController.update(manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition());
+        power = FTCMath.clamp(-0.5, 0.5, power);
+        manager.getHardware().getMotors().get("stoneElevator").setPower(power);
     }
 }

@@ -21,6 +21,9 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.igutech.autonomous.tuning.DashboardUtil;
+import static org.igutech.autonomous.AutoPrograms.RedRoadRunnerDepot.manager;
+import org.igutech.utils.FTCMath;
+import org.igutech.utils.control.PIDController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +35,14 @@ public abstract class MecanumDriveBase extends MecanumDrive {
     private FtcDashboard dashboard;
     private NanoClock clock;
 
+    private  PIDController elevatorController = new PIDController(0.02, 0.0, 0.0002);
     private Mode mode;
 
     private PIDFController turnController;
     private MotionProfile turnProfile;
     private double turnStart;
     private double startTime, waitTime;
+
 
     private DriveConstraints constraints;
     private TrajectoryFollower follower;
@@ -132,6 +137,7 @@ public abstract class MecanumDriveBase extends MecanumDrive {
     }
 
     public void update() {
+
         updatePoseEstimate();
 
         Pose2d currentPose = getPoseEstimate();
@@ -141,6 +147,7 @@ public abstract class MecanumDriveBase extends MecanumDrive {
         Canvas fieldOverlay = packet.fieldOverlay();
 
         packet.put("mode", mode);
+
 
         packet.put("x", currentPose.getX());
         packet.put("y", currentPose.getY());
@@ -253,4 +260,6 @@ public abstract class MecanumDriveBase extends MecanumDrive {
     public TrajectoryFollower getFollower() {
         return follower;
     }
+
+
 }
