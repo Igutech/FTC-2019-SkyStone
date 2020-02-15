@@ -24,8 +24,8 @@ public class Capping extends Module {
 
         if (currentButtonPositionX && !previousButtonPositionX) {
             toggleX = !toggleX;
-            if(toggleX){Teleop.getInstance().getHardware().getServos().get("CapServo").setPosition(0.8);}
-            if(!toggleX){Teleop.getInstance().getHardware().getServos().get("CapServo").setPosition(0.54);}
+            if(toggleX){Teleop.getInstance().getHardware().getServos().get("CapServo").setPosition(0.62);}
+            if(!toggleX){Teleop.getInstance().getHardware().getServos().get("CapServo").setPosition(0.29);}
         }
         previousButtonPositionX = currentButtonPositionX;
 

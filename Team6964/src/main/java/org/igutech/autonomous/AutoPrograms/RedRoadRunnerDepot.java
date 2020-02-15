@@ -48,7 +48,7 @@ public class RedRoadRunnerDepot extends LinearOpMode {
         manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.55);
         manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.99);
         manager.getHardware().getServos().get("RotationServo").setPosition(0.2);
-        manager.getHardware().getServos().get("CapServo").setPosition(0.54);
+        manager.getHardware().getServos().get("CapServo").setPosition(0.29);
         manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
 
         manager.getCvUtil().activate();
