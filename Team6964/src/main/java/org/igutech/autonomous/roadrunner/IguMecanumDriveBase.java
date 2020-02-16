@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.igutech.autonomous.AutoPrograms.RedRoadRunnerDepot.manager;
+import static org.igutech.autonomous.AutoPrograms.RedRoadRunnerDepot.startPos;
 
 public class IguMecanumDriveBase extends MecanumDriveBase {
 
@@ -138,7 +139,7 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
         elevatorState = state;
         switch (elevatorState) {
             case DOWN:
-                setElevatorTick(-20);
+                setElevatorTick(startPos);
                 break;
             case UP:
                 setElevatorTick(-700);
