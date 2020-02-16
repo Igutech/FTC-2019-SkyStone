@@ -56,6 +56,7 @@ public class StoneElevator extends Module {
     public static double d = 0.0002;
     private int lastLevel = 0;
     private boolean automaticMode = true;
+    int[] pos = new int[]{(int) startPos,-401,-670,-883,-1178,-1438,-1624,-1913,-2156,-2439,-2626,-2902 };
 
     private PIDController elevatorController = new PIDController(p, i, d);
 
@@ -74,7 +75,7 @@ public class StoneElevator extends Module {
 
     public void loop() {
 
-        manualPower = -1 * gamepadService.getAnalog(2, "right_stick_y");
+        manualPower =   gamepadService.getAnalog(2, "right_stick_y");
         currentButtonPositionDpadUp = gamepadService.getDigital(2, "dpad_up");
         currentButtonPositionDpadDown = gamepadService.getDigital(2, "dpad_down");
         currentButtonPositionRightBumper = gamepadService.getDigital(2, "right_bumper");
@@ -147,12 +148,11 @@ public class StoneElevator extends Module {
         if (autoMode) {
             level = (int) FTCMath.clamp(0, 12, level);
             int setPoint = (int) startPos - (level * TICK_PER_STONE);
-            //int setPoint = -1* (level * TICK_PER_STONE);
-            //Teleop.getInstance().telemetry.addData("sp",(int) startPos - (level * TICK_PER_STONE) );
+            Teleop.getInstance().telemetry.addData("sp",(int) startPos - (level * TICK_PER_STONE) );
             Log.d("logs", String.format("%4f %d %4f %d", startPos, level, startPos - (level * TICK_PER_STONE), Teleop.getInstance().getHardware().getMotors().get("stoneElevator").getCurrentPosition()
             ));
             elevatorController.updateSetpoint(setPoint);
-            if (Math.abs(setPoint - Teleop.getInstance().getHardware().getMotors()
+            if (Math.abs(pos[level] - Teleop.getInstance().getHardware().getMotors()
                     .get("stoneElevator").getCurrentPosition()) > 50) {
                 elevatorController.reset(Teleop.getInstance().getHardware()
                         .getMotors().get("stoneElevator").getCurrentPosition());

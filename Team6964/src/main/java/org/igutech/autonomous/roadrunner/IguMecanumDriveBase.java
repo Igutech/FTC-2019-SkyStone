@@ -1,6 +1,5 @@
 package org.igutech.autonomous.roadrunner;
 
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,30 +16,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.igutech.autonomous.AutoPrograms.RedRoadRunnerDepot.manager;
+//import static org.igutech.autonomous.AutoPrograms.RedRoadRunnerDepot.manager;
 import static org.igutech.autonomous.AutoPrograms.RedRoadRunnerDepot.startPos;
 
 public class IguMecanumDriveBase extends MecanumDriveBase {
 
+
     private List<DcMotorEx> motors;
-    private AutoUtilManager utils;
+    private AutoUtilManager manager;
     private PIDController elevatorController = new PIDController(0.015, 0.0, 0.0002);
     public static final boolean RUN_USING_ENCODER = true;
     private boolean enableElevator = false;
     private ElevatorState elevatorState = ElevatorState.OFF;
-    int startPos = manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition();
+//    int startPos = manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition();
 
-    public IguMecanumDriveBase(AutoUtilManager utils) {
+    public IguMecanumDriveBase(AutoUtilManager manager) {
         super();
 
-
-        this.utils = utils;
+        this.manager = manager;
 
         motors = Arrays.asList(
-                (DcMotorEx) utils.getHardware().getMotors().get("frontleft"),
-                (DcMotorEx) utils.getHardware().getMotors().get("backleft"),
-                (DcMotorEx) utils.getHardware().getMotors().get("backright"),
-                (DcMotorEx) utils.getHardware().getMotors().get("frontright")
+                (DcMotorEx) manager.getHardware().getMotors().get("frontleft"),
+                (DcMotorEx) manager.getHardware().getMotors().get("backleft"),
+                (DcMotorEx) manager.getHardware().getMotors().get("backright"),
+                (DcMotorEx) manager.getHardware().getMotors().get("frontright")
         );
 
         motors.get(0).setDirection(DcMotorSimple.Direction.FORWARD);
@@ -93,10 +92,10 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
     @Override
     public List<Double> getWheelPositions() {
         List<Double> wheelPositions = new ArrayList<>();
-        wheelPositions.add(AutoDriveUtil.OffsetCorrectedEncoderData.convertToUnits(utils.getDriveUtil().getEncoderData().getFrontleft(), AutoDriveUtil.OffsetCorrectedEncoderData.Units.INCHES));
-        wheelPositions.add(AutoDriveUtil.OffsetCorrectedEncoderData.convertToUnits(utils.getDriveUtil().getEncoderData().getBackleft(), AutoDriveUtil.OffsetCorrectedEncoderData.Units.INCHES));
-        wheelPositions.add(AutoDriveUtil.OffsetCorrectedEncoderData.convertToUnits(utils.getDriveUtil().getEncoderData().getBackright(), AutoDriveUtil.OffsetCorrectedEncoderData.Units.INCHES));
-        wheelPositions.add(AutoDriveUtil.OffsetCorrectedEncoderData.convertToUnits(utils.getDriveUtil().getEncoderData().getFrontright(), AutoDriveUtil.OffsetCorrectedEncoderData.Units.INCHES));
+        wheelPositions.add(AutoDriveUtil.OffsetCorrectedEncoderData.convertToUnits(manager.getDriveUtil().getEncoderData().getFrontleft(), AutoDriveUtil.OffsetCorrectedEncoderData.Units.INCHES));
+        wheelPositions.add(AutoDriveUtil.OffsetCorrectedEncoderData.convertToUnits(manager.getDriveUtil().getEncoderData().getBackleft(), AutoDriveUtil.OffsetCorrectedEncoderData.Units.INCHES));
+        wheelPositions.add(AutoDriveUtil.OffsetCorrectedEncoderData.convertToUnits(manager.getDriveUtil().getEncoderData().getBackright(), AutoDriveUtil.OffsetCorrectedEncoderData.Units.INCHES));
+        wheelPositions.add(AutoDriveUtil.OffsetCorrectedEncoderData.convertToUnits(manager.getDriveUtil().getEncoderData().getFrontright(), AutoDriveUtil.OffsetCorrectedEncoderData.Units.INCHES));
         return wheelPositions;
     }
 
@@ -111,7 +110,7 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
 
     @Override
     public double getRawExternalHeading() {
-        return utils.getGyroUtil().getAngle(false).firstAngle;
+        return manager.getGyroUtil().getAngle(false).firstAngle;
     }
 
     public void setElevatorTick(int tick) {
