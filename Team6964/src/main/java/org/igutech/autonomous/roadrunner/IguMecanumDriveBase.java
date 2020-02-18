@@ -129,6 +129,7 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
             enableElevator = false;
             power = 0.0;
         }
+
         System.out.println("state: " + elevatorState);
         System.out.println("power: " + power);
         manager.getHardware().getMotors().get("stoneElevator").setPower(power);
@@ -138,7 +139,8 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
         elevatorState = state;
         switch (elevatorState) {
             case DOWN:
-                setElevatorTick(startPos);
+                setElevatorTick(30);
+
                 break;
             case UP:
                 setElevatorTick(-700);

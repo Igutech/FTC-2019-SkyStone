@@ -181,10 +181,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
                         return Unit.INSTANCE;
                     })
-                    .addMarker(1.0, () -> {
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
-                        return Unit.INSTANCE;
-                    })
+
                     .addMarker(1.5, () -> {
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
                         return Unit.INSTANCE;
@@ -313,10 +310,7 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
                         return Unit.INSTANCE;
                     })
-                    .addMarker(1.0, () -> {
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
-                        return Unit.INSTANCE;
-                    })
+
                     .addMarker(1.5, () -> {
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
                         return Unit.INSTANCE;
@@ -442,10 +436,6 @@ public class BlueRoadRunnerDepot extends LinearOpMode {
                         manager.getHardware().getMotors().get("left_intake").setPower(0.6);
                         manager.getHardware().getMotors().get("right_intake").setPower(-0.6);
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
-                        return Unit.INSTANCE;
-                    })
-                    .addMarker(1.0, () -> {
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
                         return Unit.INSTANCE;
                     })
                     .addMarker(1.5, () -> {

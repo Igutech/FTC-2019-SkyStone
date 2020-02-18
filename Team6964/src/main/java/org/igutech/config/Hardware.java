@@ -72,6 +72,7 @@ public class Hardware {
         servos.put("RotationServo", hardwareMap.servo.get("RotationServo"));
         //servos.put("TransferServo", hardwareMap.servo.get("TransferServo"));
         servos.put("CapServo", hardwareMap.servo.get("CapServo"));
+       // servos.put("jankServo", hardwareMap.servo.get("jankServo"));
 
 
 /*        touchSensors.put("BeamBreaker",hardwareMap.get(DigitalChannel.class, "beam"));

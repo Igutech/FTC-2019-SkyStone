@@ -17,11 +17,11 @@ public class RedRoadRunnerSite extends LinearOpMode
     {
         AutoUtilManager manager = new AutoUtilManager(hardwareMap, "RedRoadRunnerSite");
         manager.getDriveUtil().resetEncoders();
-        manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.1);
-        manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.2);
-        manager.getHardware().getServos().get("TransferServo").setPosition(0.43);
-        manager.getHardware().getServos().get("GrabberServo").setPosition(0.1);
-        manager.getHardware().getServos().get("CapServo").setPosition(0.53);
+        manager.getHardware().getServos().get("FoundationServo_left").setPosition(0.55);
+        manager.getHardware().getServos().get("FoundationServo_right").setPosition(0.99);
+        manager.getHardware().getServos().get("RotationServo").setPosition(0.2);
+        manager.getHardware().getServos().get("CapServo").setPosition(0.29);
+        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
 
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -29,7 +29,7 @@ public class RedRoadRunnerSite extends LinearOpMode
 
         IguMecanumDriveBase drive = new IguMecanumDriveBase(manager);
         Trajectory leftTrajectory = drive.trajectoryBuilder()
-                .forward(5)
+                .forward(10)
                 //.forward(35.0)
 
                 //.splineTo(new Pose2d(30, 30, 0))

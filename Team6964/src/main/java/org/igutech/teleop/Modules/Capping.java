@@ -11,6 +11,10 @@ public class Capping extends Module {
     private boolean previousButtonPositionX = false;
     private boolean currentButtonPositionX = false;
 
+    private boolean toggleA = false;
+    private boolean previousButtonPositionA = false;
+    private boolean currentButtonPositionA = false;
+
     public Capping(){super(100,"Capping");}
 
 

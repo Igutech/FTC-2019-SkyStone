@@ -107,14 +107,9 @@ public class RedRoadRunnerDepot extends LinearOpMode {
                     .addMarker(1.0, () -> {
                         manager.getHardware().getMotors().get("left_intake").setPower(0.6);
                         manager.getHardware().getMotors().get("right_intake").setPower(-0.6);
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
                         return Unit.INSTANCE;
                     })
                     .addMarker(1.5, () -> {
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
-                        return Unit.INSTANCE;
-                    })
-                    .addMarker(2.0, () -> {
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
                         return Unit.INSTANCE;
                     })
@@ -176,14 +171,10 @@ public class RedRoadRunnerDepot extends LinearOpMode {
                     .addMarker(0.5, () -> {
                         manager.getHardware().getMotors().get("left_intake").setPower(0.6);
                         manager.getHardware().getMotors().get("right_intake").setPower(-0.6);
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
                         return Unit.INSTANCE;
                     })
-                    .addMarker(1.0, () -> {
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
-                        return Unit.INSTANCE;
-                    })
-                    .addMarker(1.5, () -> {
+
+                    .addMarker(0.7, () -> {
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
                         return Unit.INSTANCE;
                     })
@@ -236,14 +227,10 @@ public class RedRoadRunnerDepot extends LinearOpMode {
                     .addMarker(1.0, () -> {
                         manager.getHardware().getMotors().get("left_intake").setPower(0.6);
                         manager.getHardware().getMotors().get("right_intake").setPower(-0.6);
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
                         return Unit.INSTANCE;
                     })
-                    .addMarker(1.5, () -> {
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
-                        return Unit.INSTANCE;
-                    })
-                    .addMarker(2.0, () -> {
+
+                    .addMarker(1.2, () -> {
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
                         return Unit.INSTANCE;
                     })
@@ -311,14 +298,6 @@ public class RedRoadRunnerDepot extends LinearOpMode {
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
                         return Unit.INSTANCE;
                     })
-                    .addMarker(1.5, () -> {
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
-                        return Unit.INSTANCE;
-                    })
-                    .addMarker(2.0, () -> {
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
-                        return Unit.INSTANCE;
-                    })
                     .lineTo(new Vector2d(0.0, -45), new LinearInterpolator(Math.toRadians(180.0), Math.toRadians(0.0)))
                     .lineTo(new Vector2d(20, -30), new LinearInterpolator(Math.toRadians(180), Math.toRadians(0)))
                     .addMarker( () -> {
@@ -371,14 +350,9 @@ public class RedRoadRunnerDepot extends LinearOpMode {
                     .addMarker(1.0, () -> {
                         manager.getHardware().getMotors().get("left_intake").setPower(0.6);
                         manager.getHardware().getMotors().get("right_intake").setPower(-0.6);
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
                         return Unit.INSTANCE;
                     })
                     .addMarker(1.5, () -> {
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
-                        return Unit.INSTANCE;
-                    })
-                    .addMarker(2.0, () -> {
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
                         return Unit.INSTANCE;
                     })
@@ -444,10 +418,7 @@ public class RedRoadRunnerDepot extends LinearOpMode {
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
                         return Unit.INSTANCE;
                     })
-                    .addMarker(1.0, () -> {
-                        manager.getHardware().getServos().get("GrabberServo").setPosition(0.65);
-                        return Unit.INSTANCE;
-                    })
+
                     .addMarker(1.5, () -> {
                         manager.getHardware().getServos().get("GrabberServo").setPosition(0.99);
                         return Unit.INSTANCE;
