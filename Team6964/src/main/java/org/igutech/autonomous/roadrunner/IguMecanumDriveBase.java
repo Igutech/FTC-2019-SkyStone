@@ -16,9 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-//import static org.igutech.autonomous.AutoPrograms.RedRoadRunnerDepot.manager;
-import static org.igutech.autonomous.AutoPrograms.RedRoadRunnerDepot.startPos;
-
 public class IguMecanumDriveBase extends MecanumDriveBase {
 
 
@@ -119,10 +116,7 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
     }
 
     public void updateElevator() {
-//        if(elevatorState==ElevatorState.DOWN &&
-//                manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition()>startPos-20 ){
-//            changeElevatorState(ElevatorState.OFF);
-//        }
+
         double power = elevatorController.update(manager.getHardware().getMotors().get("stoneElevator").getCurrentPosition());
         power = FTCMath.clamp(-0.5, 0.5, power);
         if (elevatorState == ElevatorState.OFF) {
@@ -132,6 +126,7 @@ public class IguMecanumDriveBase extends MecanumDriveBase {
 
         System.out.println("state: " + elevatorState);
         System.out.println("power: " + power);
+        power = 0.0;
         manager.getHardware().getMotors().get("stoneElevator").setPower(power);
     }
 
