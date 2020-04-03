@@ -6,10 +6,10 @@ import org.igutech.teleop.Teleop;
 public class Transfer extends Module {
 
     private GamepadService gamepadService;
-    private boolean toggleA = false;
-    private boolean toggleY = false;
-    private boolean previousButtonPositionA = false;
-    private boolean previousButtonPositionY = false;
+    private boolean toggleleftBumper = false;
+    private boolean togglerightBumper = false;
+    private boolean previousButtonPositionleftBumper = false;
+    private boolean previousButtonPositionrightBumper = false;
 
     public Transfer() {
         super(500, "Transfer");
@@ -21,32 +21,32 @@ public class Transfer extends Module {
 
     public void loop() {
 
-        boolean currentButtonPositionA = gamepadService.getDigital(2, "a");
+        boolean currentButtonPositionA = gamepadService.getDigital(1, "left_bumper");
 
-        if (currentButtonPositionA && !previousButtonPositionA) {
-            toggleA = !toggleA;
-            if (toggleA) {
+        if (currentButtonPositionA && !previousButtonPositionleftBumper) {
+            toggleleftBumper = !toggleleftBumper;
+            if (toggleleftBumper) {
                 Teleop.getInstance().getHardware().getServos().get("GrabberServo").setPosition(0.99);
             }
-            if (!toggleA) {
+            if (!toggleleftBumper) {
                 Teleop.getInstance().getHardware().getServos().get("GrabberServo").setPosition(0.65);
             }
         }
-        previousButtonPositionA = currentButtonPositionA;
+        previousButtonPositionleftBumper = currentButtonPositionA;
 
-        boolean currentButtonPositionY = gamepadService.getDigital(2, "y");
+        boolean currentButtonPositionY = gamepadService.getDigital(1, "right_bumper");
 
         //resting 0.2, stack 0.88
-        if (currentButtonPositionY && !previousButtonPositionY) {
-            toggleY = !toggleY;
-            if (toggleY) {
+        if (currentButtonPositionY && !previousButtonPositionrightBumper) {
+            togglerightBumper = !togglerightBumper;
+            if (togglerightBumper) {
                 Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.88);
             }
-            if (!toggleY) {
+            if (!togglerightBumper) {
                 Teleop.getInstance().getHardware().getServos().get("RotationServo").setPosition(0.2);
             }
         }
-        previousButtonPositionY = currentButtonPositionY;
+        previousButtonPositionrightBumper = currentButtonPositionY;
 
     }
 

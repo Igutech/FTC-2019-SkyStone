@@ -20,7 +20,7 @@ public class FoundationServo extends Module {
 
     public void loop() {
 
-        currentButtonPosition = gamepadService.getDigital(1, "right_bumper");
+        currentButtonPosition = gamepadService.getDigital(1, "x");
 
         //right; free 0.99, holding 0.6
         if (currentButtonPosition && !previousButtonPosition) {

@@ -7,13 +7,10 @@ import org.igutech.teleop.Teleop;
 public class Capping extends Module {
 
     private GamepadService gamepadService;
-    private boolean toggleX = false;
-    private boolean previousButtonPositionX = false;
-    private boolean currentButtonPositionX = false;
+    private boolean toggleleftDapd = false;
+    private boolean previousButtonPositionleftDpad = false;
+    private boolean currentButtonPositionleftPad = false;
 
-    private boolean toggleA = false;
-    private boolean previousButtonPositionA = false;
-    private boolean currentButtonPositionA = false;
 
     public Capping(){super(100,"Capping");}
 
@@ -24,14 +21,14 @@ public class Capping extends Module {
     public void loop()
     {
 
-        currentButtonPositionX = gamepadService.getDigital(1, "x");
+        currentButtonPositionleftPad = gamepadService.getDigital(1, "dpad_left");
 
-        if (currentButtonPositionX && !previousButtonPositionX) {
-            toggleX = !toggleX;
-            if(toggleX){Teleop.getInstance().getHardware().getServos().get("CapServo").setPosition(0.62);}
-            if(!toggleX){Teleop.getInstance().getHardware().getServos().get("CapServo").setPosition(0.29);}
+        if (currentButtonPositionleftPad && !previousButtonPositionleftDpad) {
+            toggleleftDapd = !toggleleftDapd;
+            if(toggleleftDapd){Teleop.getInstance().getHardware().getServos().get("CapServo").setPosition(0.62);}
+            if(!toggleleftDapd){Teleop.getInstance().getHardware().getServos().get("CapServo").setPosition(0.29);}
         }
-        previousButtonPositionX = currentButtonPositionX;
+        previousButtonPositionleftDpad = currentButtonPositionleftPad;
 
     }
 
