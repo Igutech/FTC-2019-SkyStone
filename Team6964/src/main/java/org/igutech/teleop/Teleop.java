@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.igutech.config.Hardware;
+import org.igutech.teleop.Modules.BulkRead;
 import org.igutech.teleop.Modules.Capping;
 import org.igutech.teleop.Modules.Collection;
 import org.igutech.teleop.Modules.DisconnectWorkaround;
@@ -44,9 +45,7 @@ public class Teleop extends OpMode {
     private void registerServices() {
         modules.add(new DisconnectWorkaround());
         modules.add(new GamepadService(gamepad1,gamepad2));
-
-
-
+        modules.add(new BulkRead());
     }
 
     /**

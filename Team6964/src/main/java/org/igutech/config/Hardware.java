@@ -1,5 +1,6 @@
 package org.igutech.config;
 
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -8,6 +9,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.igutech.autonomous.roadrunner.Elevator;
+import org.openftc.revextensions2.ExpansionHubEx;
+import org.openftc.revextensions2.ExpansionHubMotor;
+import org.openftc.revextensions2.RevBulkData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +23,9 @@ public class Hardware {
     private Map<String, Elevator> elevator;
     private Map<String, Servo> servos;
     private Map<String, DigitalChannel> touchSensors;
+    private RevBulkData bulkData;
+    private ExpansionHubMotor motor0, motor1, motor2, motor3;
+    private ExpansionHubEx expansionHub;
 
     /**
      * Initialize the hardware object
