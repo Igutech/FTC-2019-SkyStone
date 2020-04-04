@@ -25,11 +25,13 @@ public class BulkRead extends Service {
 
     @Override
     public void init() {
-        expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+        expansionHub = Teleop.getInstance().getHardware().getHardwareMap().get(ExpansionHubEx.class, "Expansion Hub 2");
         motor0 = (ExpansionHubMotor) Teleop.getInstance().getHardware().getMotors().get("frontleft");
         motor1 = (ExpansionHubMotor) Teleop.getInstance().getHardware().getMotors().get("frontright");
         motor2 = (ExpansionHubMotor) Teleop.getInstance().getHardware().getMotors().get("backleft");
         motor3 = (ExpansionHubMotor) Teleop.getInstance().getHardware().getMotors().get("backright");
+
+        loop();
     }
 
     @Override
