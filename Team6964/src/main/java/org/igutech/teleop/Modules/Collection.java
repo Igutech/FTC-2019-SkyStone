@@ -24,9 +24,9 @@ public class Collection extends Module {
         if (currentButtonPositionY && !previousButtonPositionY) {
             toggleY = !toggleY;
             if(toggleY){
-                Teleop.getInstance().getHardware().getMotors().get("left_intake").setPower(0.6);
-                Teleop.getInstance().getHardware().getMotors().get("right_intake").setPower(-0.6);
-                Teleop.getInstance().getHardware().getMotors().get("transferMotor").setPower(1.0);
+                Teleop.getInstance().getHardware().getMotors().get("left_intake").setPower(-0.6);
+                Teleop.getInstance().getHardware().getMotors().get("right_intake").setPower(0.6);
+                Teleop.getInstance().getHardware().getMotors().get("transferMotor").setPower(-1.0);
             }
             if(!toggleY){
                 Teleop.getInstance().getHardware().getMotors().get("left_intake").setPower(0.0);
